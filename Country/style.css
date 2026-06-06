@@ -30,12 +30,12 @@ h1 {
 }
 
 /* converter */
-.converter {
+/* .converter {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   align-items: center;
-}
+} */
 
 input, select, button {
   padding: 10px;
@@ -136,6 +136,13 @@ button:disabled {
   transform: scale(1.05);
 }
 
+/* converter and country search styling same */
+.converter, .search-box {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
 .close-dedication {
   position: absolute;
   top: 10px;
