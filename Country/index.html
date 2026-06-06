@@ -8,82 +8,84 @@
 </head>
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <h1>🌍 Live Currency & Country Stats</h1>
-    <!-- Dedication Section -->
-<div class="dedication-card">
-  <div class="photo-frame">
-    <img src="jan.png" alt="My Chachoo Jan">
+  <h1>🌍 Live Currency & Country Stats</h1>
+
+  <!-- 💖 DEDICATION -->
+  <div id="dedicationCard" class="dedication-card">
+
+   <button class="close-btn" id="closeDedication">✖</button>
+
+    <div class="photo-frame">
+      <img src="jan.png" alt="Uncle Photo">
+    </div>
+
+    <h2>💖 Dedicated to My Uncle Jan</h2>
+
+    <p>
+      This is my first HTML, CSS, and JavaScript project, created with love and respect.  
+      <br><br>
+      I dedicate this work to my uncle, <b>Abdul Haleem Asghar</b>, whose kindness, guidance, and constant encouragement have always inspired me.  
+      <br><br>
+      His support helped me grow with confidence and stay motivated.  
+      <br><br>
+      This project is a small token of gratitude. May Allah bless him with happiness and success 🤍
+    </p>
+
   </div>
 
-  <h2>💖 Dedicated to My Chachoo Jan</h2>
+  <!-- 💱 CURRENCY -->
+  <div class="card">
+    <h2>💱 Currency Converter</h2>
 
-  <p>
-  This is my first html,css and JavaScript project,
-   lovingly dedicated to my uncle and family member, 
-   Abdul Haleem Asghar, whose kindness, guidance, 
-   and encouragement have always inspired me to learn,
-    grow, and pursue my goals with confidence. Every step 
-    of this journey reflects the values 
-    and support you have shared with me. Thank you for being a
-     source of strength, wisdom, and motivation. Your presence has made a
-      lasting impact on my life, and this work stands as a small token of my gratitude
-       and respect.
-        May Allah continue to bless you with happiness, good health, and success.
-
-  </p>
-</div>
-
-    <!-- Currency Converter -->
-    <div class="card">
-      <h2>💱 Currency Converter</h2>
-
-      <div class="converter">
-        <input type="number" id="amount" value="1" />
+    <div class="converter">
+      <input type="number" id="amount" value="1"/>
 
       <select id="fromCurrency">
-  <option value="USD">USD - US Dollar</option>
-  <option value="EUR">EUR - Euro</option>
-  <option value="GBP">GBP - British Pound</option>
-  <option value="PKR">PKR - Pakistani Rupee</option>
-  <option value="INR">INR - Indian Rupee</option>
-  <option value="JPY">JPY - Japanese Yen</option>
-  <option value="SAR">SAR - Saudi Riyal</option>
-  <option value="AED">AED - UAE Dirham</option>
-</select>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="GBP">GBP</option>
+        <option value="PKR">PKR</option>
+        <option value="INR">INR</option>
+        <option value="JPY">JPY</option>
+        <option value="SAR">SAR</option>
+        <option value="AED">AED</option>
+      </select>
 
-<span>➡</span>
-
-<select id="toCurrency">
-  <option value="PKR">PKR - Pakistani Rupee</option>
-  <option value="USD">USD - US Dollar</option>
-  <option value="EUR">Euro</option>
-  <option value="GBP">British Pound</option>
-  <option value="INR">Indian Rupee</option>
-  <option value="JPY">Japanese Yen</option>
-  <option value="SAR">Saudi Riyal</option>
-  <option value="AED">UAE Dirham</option>
-</select>
-
-        <button id="convertBtn">Convert</button>
+      <div class="arrow-box">
+        <span class="arrow">➡️ ⇄ ➡️</span>
       </div>
 
-      <p id="result">Result will appear here</p>
+      <select id="toCurrency">
+        <option value="PKR">PKR</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="GBP">GBP</option>
+        <option value="INR">INR</option>
+        <option value="JPY">JPY</option>
+        <option value="SAR">SAR</option>
+        <option value="AED">AED</option>
+      </select>
+
+      <button id="convertBtn">Convert</button>
     </div>
 
-    <!-- Country Info -->
-    <div class="card">
-      <h2>🏳 Country Information</h2>
-
-      <input type="text" id="countryInput" placeholder="Enter country name" />
-      <button id="searchBtn">Search</button>
-
-      <div id="countryBox"></div>
-    </div>
-
+    <p id="result">Result will appear here</p>
   </div>
 
-  <script src="script.js"></script>
+  <!-- 🌍 COUNTRY -->
+  <div class="card">
+    <h2>🏳 Country Information</h2>
+
+    <input type="text" id="countryInput" placeholder="Enter country name"/>
+    <button id="searchBtn">Search</button>
+
+    <div id="countryBox"></div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
