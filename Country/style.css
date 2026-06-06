@@ -20,6 +20,14 @@ h1 {
   margin-bottom: 20px;
   color: #333;
 }
+h2 {
+  white-space: nowrap;      /* Yeh text ko line break karne se rokega */
+  overflow: hidden;         /* Safe side agar text bada ho */
+  text-overflow: ellipsis;  /* Agar screen bohot hi choti ho toh text ke aage ... lag jaye */
+  font-size: calc(1.2rem + 0.5vw); /* Yeh font size ko screen ke mutabiq chota-bada karega */
+  margin-bottom: 15px;
+  color: #333;
+}
 
 .card {
   background: white;
