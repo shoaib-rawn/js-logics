@@ -43,8 +43,19 @@ h2 {
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-/* Converter & Search box flexible wrapping layout */
-.converter, .search-box {
+/* =======================================================
+   🔄 CONVERTER LAYOUT (FORCED LINE 1 FOR INPUT & BOTH DROPDOWNS)
+   ======================================================= */
+.converter {
+  display: flex;
+  gap: 6px;            /* Mobile par tight packing ke liye gap thoda kam kiya */
+  flex-wrap: wrap;     /* Convert button ko line 2 par bhejne ke liye wrap active rakha */
+  align-items: center;
+  width: 100%;
+}
+
+/* Search box styling */
+.search-box {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
@@ -56,64 +67,79 @@ input, select, button {
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  font-size: 14px;
+  font-size: 13px;     /* Mobile par exact fit aane ke liye thoda screen friendly size */
 }
 
-/* Input gets dynamic space on mobile */
+/* Input layout */
 input {
-  flex: 2;
-  min-width: 140px;
+  flex: 1.2;
+  min-width: 65px;     /* Width choti rakhi taake dono dropdowns line 1 par hi adjustment lein */
 }
 
-/* =======================================================
-   📦 SMART RESPONSIVE DROPDOWNS (MOBILE VS LAPTOP)
-   ======================================================= */
+/* Both Dropdowns (Forced to stay side-by-side on Line 1) */
 select {
-  flex: 0.8;
-  min-width: 85px;
+  flex: 1;
+  min-width: 65px;     /* 3-letter currency code (USD, PKR) smoothly fit karega */
+  max-width: 80px;     /* Is limit se dropdown mobile par line break nahi karega */
   cursor: pointer;
   background-color: #fff;
-  /* By default mobile par dropdown chota rahega */
-  max-width: 105px; 
+  padding: 10px 4px;   /* Dropdown ke andar space control ki */
 }
 
-/* 💻 JAB SCREEN BADI HO (LAPTOP & DESKTOP - 768px se upar) */
-@media (min-width: 768px) {
-  select {
-    flex: 1;            /* Laptop screen par zyada space le */
-    max-width: 180px;   /* Laptop par dropdown automatic bada aur professional dikhe */
-    font-size: 15px;
-  }
-  
-  input {
-    flex: 1.5;          /* Laptop screen par standard size maintain kare */
-  }
+.arrow-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;      /* Arrow kabhi bhi pichak kar layout kharab nahi karega */
 }
 
-/* Buttons Styling */
-button {
-  flex: 1;
-  min-width: 100px;
+.arrow {
+  font-size: 13px;     /* Mobile par pyara aur chota arrow */
+}
+
+/* 🟢 MOBILE CONVERT BUTTON (Always on Line 2 & Full Width) */
+#convertBtn {
+  flex: 1 1 100%;      /* 100% width ki wajah se automatic 2nd line par lock ho gaya */
   background: #4caf50;
   color: white;
   cursor: pointer;
   border: none;
   font-weight: bold;
+  margin-top: 4px;
 }
 
 button:disabled {
   opacity: 0.7;
 }
 
-/* Arrow layout settings */
-.arrow-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+/* 💻 LAPTOP & DESKTOP SCREENS (768px se upar automatic 1-line setup) */
+@media (min-width: 768px) {
+  .converter {
+    flex-wrap: nowrap; /* Laptop par wrapping mukammal khatam */
+    gap: 10px;
+  }
 
-.arrow {
-  font-size: 20px;
+  input, select, button {
+    font-size: 14px;
+  }
+
+  input {
+    flex: 2;
+  }
+
+  select {
+    max-width: 150px;  /* Laptop par dropdown wapis bada aur khula show ho */
+    padding: 10px;
+  }
+
+  #convertBtn {
+    flex: 1;           /* Desktop par full-width khatam, layout balance */
+    margin-top: 0;
+  }
+  
+  .arrow {
+    font-size: 20px;   /* Laptop par normal bada arrow */
+  }
 }
 
 /* Country card styles */
@@ -143,7 +169,7 @@ button:disabled {
 }
 
 .dedication-card h2 {
-  white-space: normal; /* Text lines wrap cleanly and don't turn into ... */
+  white-space: normal;
   word-wrap: break-word;
 }
 
