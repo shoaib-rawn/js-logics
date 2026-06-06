@@ -225,6 +225,44 @@ button:hover {
     line-height: 1.6;
     text-align: left;
   }
+  /* Smooth mobile experience */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Highlight result like focus card */
+.country-card {
+  transition: all 0.3s ease;
+}
+
+/* when result appears */
+.country-card {
+  animation: fadeInUp 0.4s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile focus improvement */
+@media (max-width: 480px) {
+  .country-card {
+    border: 2px solid rgba(76, 175, 80, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  input:focus {
+    outline: 2px solid #4caf50;
+    border-color: #4caf50;
+  }
+}
 
   .dedication-card h2 {
     font-size: 20px;
