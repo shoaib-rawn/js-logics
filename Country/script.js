@@ -4,7 +4,7 @@
 const API_KEY = "cb33a1dc5653f98e8c651d77";
 
 // ===============================
-// 📌 ELEMENTS (Sabhie elements ko select karna zaroori hai)
+// 📌 ELEMENTS
 // ===============================
 const convertBtn = document.getElementById("convertBtn");
 const result = document.getElementById("result");
@@ -12,6 +12,8 @@ const searchBtn = document.getElementById("searchBtn");
 const countryBox = document.getElementById("countryBox");
 const closeDedication = document.getElementById("closeDedication");
 const dedicationCard = document.getElementById("dedicationCard");
+const fromSelect = document.getElementById("fromCurrency");
+const toSelect = document.getElementById("toCurrency");
 
 // ===============================
 // 🌍 LIVE STATE
@@ -41,6 +43,52 @@ async function fetchRate(fromCurrency) {
     return null;
   }
 }
+
+// ==========================================
+// 🔄 DYNAMICALLY POPULATE ALL CURRENCIES
+// ==========================================
+async function initCurrencies() {
+  // Loading status text jab tak currencies load ho rahi hain
+  fromSelect.innerHTML = "<option>Loading...</option>";
+  toSelect.innerHTML = "<option>Loading...</option>";
+
+  // Base currency USD lekar saari available keys nikalte hain
+  const rates = await fetchRate("USD");
+
+  if (!rates) {
+    // Backup safe options agar internet ya API ka koi masla ho
+    const backup = ["USD", "PKR", "EUR", "GBP", "INR", "SAR", "AED", "CNY"];
+    populateDropdowns(backup);
+    return;
+  }
+
+  const currencyKeys = Object.keys(rates);
+  populateDropdowns(currencyKeys);
+}
+
+function populateDropdowns(currencies) {
+  fromSelect.innerHTML = "";
+  toSelect.innerHTML = "";
+
+  currencies.forEach((currency) => {
+    // Dropdown From ke liye option
+    const optionFrom = document.createElement("option");
+    optionFrom.value = currency;
+    optionFrom.textContent = currency;
+    if (currency === "USD") optionFrom.selected = true; // Default From
+    fromSelect.appendChild(optionFrom);
+
+    // Dropdown To ke liye option
+    const optionTo = document.createElement("option");
+    optionTo.value = currency;
+    optionTo.textContent = currency;
+    if (currency === "PKR") optionTo.selected = true; // Default To
+    toSelect.appendChild(optionTo);
+  });
+}
+
+// App start hote hi currencies initialization chalayein
+initCurrencies();
 
 // ===============================
 // 💱 UPDATE UI
@@ -96,8 +144,8 @@ convertBtn.addEventListener("click", async () => {
   const startTime = Date.now();
 
   const amount = parseFloat(document.getElementById("amount").value);
-  const fromCurrency = document.getElementById("fromCurrency").value;
-  const toCurrency = document.getElementById("toCurrency").value;
+  const fromCurrency = fromSelect.value;
+  const toCurrency = toSelect.value;
 
   if (isNaN(amount) || amount <= 0) {
     result.innerText = "Please enter a valid amount!";
@@ -229,7 +277,7 @@ searchBtn.addEventListener("click", async () => {
           <p><strong>Region:</strong> ${region}</p>
           <p><strong>Population:</strong> ${population.toLocaleString()}</p>
           <p><strong>Currency:</strong> ${currencyName}</p>
-          <p><strong>Overall Weather:</strong> ${weatherText}</p>
+          <p><strong>Current Weather:</strong> ${weatherText}</p>
           <p><strong>Local Time:</strong> ${countryTimeText}</p>
         </div>
       `;

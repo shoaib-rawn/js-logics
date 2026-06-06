@@ -30,7 +30,7 @@ h2 {
 }
 
 .card {
-  background: white;
+  background: rgb(255, 251, 251);
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 10px;
@@ -94,7 +94,7 @@ button:disabled {
 /* dedication */
 .dedication-card {
   position: relative;
-  background: linear-gradient(135deg,#fff8e1,#fff);
+ background: linear-gradient(135deg,#fff8e1,#fff);
   padding: 25px;
   
   border-radius: 15px;

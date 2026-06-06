@@ -12,62 +12,37 @@
 
   <h1>🌍 Live Currency & Country Stats</h1>
 
-  <!-- 💖 DEDICATION -->
   <div id="dedicationCard" class="dedication-card">
-
-   <button class="close-btn" id="closeDedication">✖</button>
-
+    <button class="close-btn" id="closeDedication">✖</button>
     <div class="photo-frame">
       <img src="jan.png" alt="Uncle Photo">
     </div>
-
    
-    <h2> 💖Dedicated to My Family Member</h2>
-
+    <h2>💖 Dedicated to My Family Member</h2>
     <p>
       This is my first HTML, CSS, and JavaScript project, created with love and respect.  
       <br><br>
-      I dedicate this work to my uncle Jan, <b>Abdul Haleem Asghar</b>, whose kindness, guidance, and constant encouragement have always inspired me.  
+      I dedicate this work to my uncle jan, <b>Abdul Haleem Asghar</b>, whose kindness, guidance, and constant encouragement have always inspired me.  
       <br><br>
       His support helped me grow with confidence and stay motivated.  
       <br><br>
       This project is a small token of gratitude. May Allah bless him with happiness and success 🤍
     </p>
-
   </div>
 
-  <!-- 💱 CURRENCY -->
   <div class="card">
     <h2>💱 Currency Converter</h2>
 
     <div class="converter">
-      <input type="number" id="amount" value="0"/>
+      <input type="number" id="amount" value="1"/>
 
-      <select id="fromCurrency">
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="PKR">PKR</option>
-        <option value="INR">INR</option>
-        <option value="JPY">JPY</option>
-        <option value="SAR">SAR</option>
-        <option value="AED">AED</option>
-      </select>
+      <select id="fromCurrency"></select>
 
       <div class="arrow-box">
         <span class="arrow">➡️ ⇄ ➡️</span>
       </div>
 
-      <select id="toCurrency">
-        <option value="PKR">PKR</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="INR">INR</option>
-        <option value="JPY">JPY</option>
-        <option value="SAR">SAR</option>
-        <option value="AED">AED</option>
-      </select>
+      <select id="toCurrency"></select>
 
       <button id="convertBtn">Convert</button>
     </div>
@@ -75,19 +50,16 @@
     <p id="result">Result will appear here</p>
   </div>
 
-  <!-- 🌍 COUNTRY -->
   <div class="card">
-  <h2>🏳 Country Information</h2>
-
-  <div class="search-box">
-    <input type="text" id="countryInput" placeholder="country name"/>
-    <button id="searchBtn">Search</button>
+    <h2>🏳 Country Information</h2>
+    <div class="search-box">
+      <input type="text" id="countryInput" placeholder="country name"/>
+      <button id="searchBtn">Search</button>
+    </div>
+    <div id="countryBox"></div>
   </div>
 
-  <div id="countryBox"></div>
 </div>
-
-
 
 <script src="script.js"></script>
 </body>
