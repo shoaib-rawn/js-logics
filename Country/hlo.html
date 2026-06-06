@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Practice Lab - Complete Revision</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        :root {
+            --bg-primary: #f7f7f8;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e8e8ed;
+            --text-primary: #111111;
+            --text-secondary: #5a5a5e;
+            --border: #d4d4d8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #18181b;
+                --bg-secondary: #27272a;
+                --bg-tertiary: #3f3f46;
+                --text-primary: #fafafa;
+                --text-secondary: #a1a1aa;
+                --border: #3f3f46;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            border-left: 3px solid var(--accent);
+            padding-left: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .demo-area {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px dashed var(--border);
+            min-height: 150px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        button, .btn {
+            padding: 8px 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .code-block {
+            background: var(--bg-tertiary);
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        input, textarea, select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background: var(--accent);
+            margin: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-radius: 0;
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .content-panel {
+            display: none;
+            padding: 20px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+        }
+
+        .content-panel.active {
+            display: block;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--bg-primary);
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .event-log {
+            background: var(--bg-tertiary);
+            padding: 10px;
+            height: 100px;
+            overflow-y: auto;
+            font-size: 12px;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+
+        hr {
+            margin: 20px 0;
+            border-color: var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 DOM Practice Lab</h1>
+        <div class="subtitle">Complete revision with interactive examples - click buttons, edit code, see results!</div>
+
+        <div class="grid">
+            <!-- Section 1: Selecting & Creating Elements -->
+            <div class="card">
+                <div class="card-header">1️⃣ Selecting & Creating Elements</div>
+                <div class="card-body">
+                    <div class="demo-area" id="selectDemo">
+                        <div class="title">Demo Box 1</div>
+                        <div class="title">Demo Box 2</div>
+                        <button class="demo-btn">Button 1</button>
+                        <button class="demo-btn">Button 2</button>
+                    </div>
+                    <div class="controls">
+                        <button onclick="selectFirstTitle()">querySelector('.title')</button>
+                        <button onclick="selectAllTitles()">querySelectorAll('.title')</button>
+                        <button onclick="createNewElement()">createElement + append</button>
+                        <button onclick="insertAdjacentHTMLExample()">insertAdjacentHTML</button>
+                    </div>
+                    <div class="code-block" id="selectOutput"></div>
+                </div>
+            </div>
+
+            <!-- Section 2: ClassList & Styling -->
+            <div class="card">
+                <div class="card-header">2️⃣ ClassList & Inline Styling</div>
+                <div class="card-body">
+                    <div class="demo-area" style="text-align: center;">
+                        <div id="styleBox" class="box">Style Me!</div>
+                    </div>
+                    <div class="controls">
+                        <button onclick="addClass()">classList.add('active')</button>
+                        <button onclick="removeClass()">classList.remove('active')</button>
+                        <button onclick="toggleClass()">classList.toggle('highlight')</button>
+                        <button onclick="changeInlineStyle()">Change inline style</button>
+                        <button onclick="checkContains()">Check contains()</button>
+                    </div>
+                    <div class="code-block" id="styleOutput"></div>
+                </div>
+            </div>
+
+            <!-- Section 3: Attributes & Dataset -->
+            <div class="card">
+                <div class="card-header">3️⃣ Attributes & Dataset</div>
+                <div class="card-body">
+                    <div class="demo-area">
+                        <a id="demoLink" href="https://example.com" data-user-id="123" data-role="admin">Demo Link</a>
+                        <div id="userInfo" style="margin-top: 10px;"></div>
+                    </div>
+                    <div class="controls">
+                        <button onclick="getAttributeExample()">getAttribute('href')</button>
+                        <button onclick="setAttributeExample()">setAttribute('href', 'https://google.com')</button>
+                        <button onclick="showDataset()">Show dataset</button>
+                        <button onclick="updateDataset()">Update dataset</button>
+                    </div>
+                    <div class="code-block" id="attrOutput"></div>
+                </div>
+            </div>
+
+            <!-- Section 4: Event Handling -->
+            <div class="card">
+                <div class="card-header">4️⃣ Event Handling & Propagation</div>
+                <div class="card-body">
+                    <div class="demo-area" id="eventParent" style="background: var(--bg-tertiary); padding: 20px;">
+                        <div style="background: var(--accent); padding: 20px; border-radius: 8px;">
+                            Parent Element
+                            <button id="eventChildBtn" style="margin: 10px; display: block;">Child Button</button>
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <button onclick="addClickEvent()">Add click event</button>
+                        <button onclick="addStopPropagation()">Add stopPropagation</button>
+                        <button onclick="showEventObject()">Show event object</button>
+                        <button onclick="clearEventLog()">Clear log</button>
+                    </div>
+                    <div class="event-log" id="eventLog"></div>
+                </div>
+            </div>
+
+            <!-- Section 5: DOM Traversing -->
+            <div class="card">
+                <div class="card-header">5️⃣ DOM Traversing (parent/child/sibling)</div>
+                <div class="card-body">
+                    <div class="demo-area" id="traverseDemo">
+                        <div class="parent-div" style="padding: 10px; background: var(--bg-tertiary);">
+                            Parent
+                            <div class="child-div" style="margin: 10px; padding: 10px; background: var(--accent);">
+                                Child Element
+                                <span class="grandchild">Grandchild span</span>
+                            </div>
+                            <div class="sibling">Sibling div</div>
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <button onclick="getParentElement()">parentElement</button>
+                        <button onclick="getChildren()">children</button>
+                        <button onclick="getNextSibling()">nextElementSibling</button>
+                        <button onclick="getClosest()">closest('.parent-div')</button>
+                    </div>
+                    <div class="code-block" id="traverseOutput"></div>
+                </div>
+            </div>
+
+            <!-- Section 6: Event Delegation & Tab Component -->
+            <div class="card">
+                <div class="card-header">6️⃣ Event Delegation & Tab Component</div>
+                <div class="card-body">
+                    <div class="tab-container" id="tabContainer">
+                        <button class="tab-btn active" data-tab="1">Tab 1</button>
+                        <button class="tab-btn" data-tab="2">Tab 2</button>
+                        <button class="tab-btn" data-tab="3">Tab 3</button>
+                    </div>
+                    <div class="content-panel active panel-1">Content for Tab 1 - Event delegation in action!</div>
+                    <div class="content-panel panel-2">Content for Tab 2 - Click works via parent listener</div>
+                    <div class="content-panel panel-3">Content for Tab 3 - No individual event listeners needed</div>
+                    <div class="code-block" id="delegationOutput"></div>
+                </div>
+            </div>
+
+            <!-- Section 7: Todo List (Complete DOM Practice) -->
+            <div class="card">
+                <div class="card-header">7️⃣ Practical: Todo List (All Concepts Combined)</div>
+                <div class="card-body">
+                    <div class="controls">
+                        <input type="text" id="todoInput" placeholder="Add new todo..." style="flex: 1;">
+                        <button onclick="addTodo()">Add Todo</button>
+                        <button onclick="clearAllTodos()">Clear All</button>
+                    </div>
+                    <div class="demo-area" id="todoList" style="min-height: 200px;">
+                        <div class="todo-item">
+                            <span>Example: Click to toggle complete</span>
+                            <button onclick="this.parentElement.remove()" style="margin-left: auto;">Delete</button>
+                        </div>
+                    </div>
+                    <div class="code-block" id="todoOutput"></div>
+                </div>
+            </div>
+
+            <!-- Section 8: Smooth Scroll -->
+            <div class="card">
+                <div class="card-header">8️⃣ Smooth Scroll & Coordinates</div>
+                <div class="card-body">
+                    <div class="demo-area" style="height: 200px; overflow-y: auto;" id="scrollContainer">
+                        <div style="height: 300px;">Scroll down to see demo section</div>
+                        <div id="targetSection" style="padding: 20px; background: var(--accent); color: white; border-radius: 8px;">
+                            🎯 Target Section - Scrolled to here!
+                        </div>
+                        <div style="height: 300px;"></div>
+                    </div>
+                    <div class="controls">
+                        <button onclick="smoothScrollToTarget()">scrollIntoView smooth</button>
+                        <button onclick="scrollToTop()">scrollTo top</button>
+                        <button onclick="scrollWithOffset()">Scroll with offset</button>
+                        <button onclick="getCoordinates()">Get coordinates</button>
+                    </div>
+                    <div class="code-block" id="scrollOutput"></div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div style="background: var(--bg-secondary); padding: 20px; border-radius: 12px; margin-top: 20px;">
+            <h3>📝 Try These Challenges:</h3>
+            <ul style="margin-left: 20px; color: var(--text-secondary);">
+                <li>Create 5 new boxes using createElement and append</li>
+                <li>Toggle dark/light mode using classList</li>
+                <li>Use event delegation to handle dynamic todo items</li>
+                <li>Build a counter that increments on click</li>
+                <li>Create a modal that opens/closes with classList.toggle</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // ========== SECTION 1: SELECTING ELEMENTS ==========
+        function selectFirstTitle() {
+            const element = document.querySelector('.title');
+            document.getElementById('selectOutput').innerHTML = `querySelector('.title'): ${element ? element.outerHTML : 'Not found'}`;
+            element.style.border = '2px solid var(--success)';
+            setTimeout(() => element.style.border = '', 1000);
+        }
+
+        function selectAllTitles() {
+            const elements = document.querySelectorAll('.title');
+            const count = elements.length;
+            document.getElementById('selectOutput').innerHTML = `querySelectorAll('.title'): Found ${count} elements<br>${Array.from(elements).map(el => el.outerHTML).join('<br>')}`;
+            elements.forEach(el => el.style.border = '2px solid var(--warning)');
+            setTimeout(() => elements.forEach(el => el.style.border = ''), 1000);
+        }
+
+        function createNewElement() {
+            const newDiv = document.createElement('div');
+            newDiv.textContent = `New element created at ${new Date().toLocaleTimeString()}`;
+            newDiv.style.padding = '10px';
+            newDiv.style.background = 'var(--success)';
+            newDiv.style.color = 'white';
+            newDiv.style.borderRadius = '6px';
+            newDiv.style.marginTop = '10px';
+            document.getElementById('selectDemo').appendChild(newDiv);
+            document.getElementById('selectOutput').innerHTML = `✅ Created and appended new div using createElement + appendChild`;
+        }
+
+        function insertAdjacentHTMLExample() {
+            document.getElementById('selectDemo').insertAdjacentHTML('beforeend', '<button class="demo-btn" style="background: var(--success);">New Button</button>');
+            document.getElementById('selectOutput').innerHTML = `✅ Inserted new button using insertAdjacentHTML('beforeend')`;
+        }
+
+        // ========== SECTION 2: CLASS LIST & STYLING ==========
+        const styleBox = document.getElementById('styleBox');
+        
+        function addClass() {
+            styleBox.classList.add('active');
+            styleBox.style.background = 'var(--success)';
+            document.getElementById('styleOutput').innerHTML = `✅ classList.add('active') - Class added<br>Box now has classes: ${Array.from(styleBox.classList).join(', ')}`;
+        }
+
+        function removeClass() {
+            styleBox.classList.remove('active');
+            styleBox.style.background = 'var(--accent)';
+            document.getElementById('styleOutput').innerHTML = `✅ classList.remove('active') - Class removed<br>Box now has classes: ${Array.from(styleBox.classList).join(', ')}`;
+        }
+
+        function toggleClass() {
+            styleBox.classList.toggle('highlight');
+            const hasClass = styleBox.classList.contains('highlight');
+            styleBox.style.border = hasClass ? '3px solid var(--warning)' : 'none';
+            document.getElementById('styleOutput').innerHTML = `✅ classList.toggle('highlight') - ${hasClass ? 'Added' : 'Removed'}`;
+        }
+
+        function changeInlineStyle() {
+            const randomColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+            styleBox.style.backgroundColor = randomColor;
+            styleBox.style.transform = 'scale(1.1)';
+            setTimeout(() => styleBox.style.transform = '', 300);
+            document.getElementById('styleOutput').innerHTML = `✅ Changed inline style: backgroundColor = ${randomColor}<br>Using element.style.propertyName`;
+        }
+
+        function checkContains() {
+            const hasActive = styleBox.classList.contains('active');
+            document.getElementById('styleOutput').innerHTML = `✅ classList.contains('active'): ${hasActive}<br>Returns true/false based on class existence`;
+        }
+
+        // ========== SECTION 3: ATTRIBUTES & DATASET ==========
+        const demoLink = document.getElementById('demoLink');
+        
+        function getAttributeExample() {
+            const href = demoLink.getAttribute('href');
+            document.getElementById('attrOutput').innerHTML = `🔗 getAttribute('href'): ${href}`;
+        }
+
+        function setAttributeExample() {
+            demoLink.setAttribute('href', 'https://google.com');
+            demoLink.textContent = 'Google.com (updated)';
+            document.getElementById('attrOutput').innerHTML = `✅ setAttribute('href', 'https://google.com') - Href updated to: ${demoLink.getAttribute('href')}`;
+        }
+
+        function showDataset() {
+            const userId = demoLink.dataset.userId;
+            const role = demoLink.dataset.role;
+            document.getElementById('userInfo').innerHTML = `📊 Dataset values:<br>user-id: ${userId}<br>role: ${role}`;
+            document.getElementById('attrOutput').innerHTML = `📊 dataset.userId: ${userId}<br>dataset.role: ${role}<br>HTML attribute: data-user-id="${userId}" data-role="${role}"`;
+        }
+
+        function updateDataset() {
+            demoLink.dataset.userId = '999';
+            demoLink.dataset.role = 'super-admin';
+            document.getElementById('userInfo').innerHTML = `✅ Updated dataset:<br>user-id: ${demoLink.dataset.userId}<br>role: ${demoLink.dataset.role}`;
+            document.getElementById('attrOutput').innerHTML = `✅ dataset updated! Now shows user-id="999" role="super-admin"`;
+        }
+
+        // ========== SECTION 4: EVENT HANDLING ==========
+        let eventLog = [];
+        
+        function logEvent(message) {
+            eventLog.unshift(`${new Date().toLocaleTimeString()}: ${message}`);
+            if (eventLog.length > 5) eventLog.pop();
+            document.getElementById('eventLog').innerHTML = eventLog.map(log => `<div>${log}</div>`).join('');
+        }
+
+        function addClickEvent() {
+            const btn = document.getElementById('eventChildBtn');
+            btn.onclick = () => logEvent('Button clicked! (using onclick)');
+            logEvent('✅ Click event added to button');
+        }
+
+        function addStopPropagation() {
+            const parent = document.getElementById('eventParent');
+            const child = document.getElementById('eventChildBtn');
+            
+            parent.onclick = () => logEvent('PARENT clicked - BUBBLING');
+            child.onclick = (e) => {
+                e.stopPropagation();
+                logEvent('CHILD clicked - STOPPED propagation, parent WON\'T fire');
+            };
+            logEvent('✅ stopPropagation() added - now parent won\'t receive child clicks');
+        }
+
+        function showEventObject() {
+            const btn = document.getElementById('eventChildBtn');
+            btn.onclick = (e) => {
+                logEvent(`Event object properties:
+                - type: ${e.type}
+                - target: ${e.target.tagName}
+                - currentTarget: ${e.currentTarget.tagName}
+                - bubbles: ${e.bubbles}`);
+            };
+            logEvent('✅ Click button to see full event object properties');
+        }
+
+        function clearEventLog() {
+            eventLog = [];
+            document.getElementById('eventLog').innerHTML = '';
+            logEvent('Event log cleared');
+        }
+
+        // ========== SECTION 5: DOM TRAVERSING ==========
+        function getParentElement() {
+            const grandchild = document.querySelector('.grandchild');
+            const parent = grandchild.parentElement;
+            const grandParent = parent.parentElement;
+            document.getElementById('traverseOutput').innerHTML = `🔝 Traversing UP:<br>
+            Grandchild → parentElement: ${parent.tagName} with class "${parent.className}"<br>
+            → parentElement again: ${grandParent.tagName} with class "${grandParent.className}"`;
+        }
+
+        function getChildren() {
+            const parent = document.querySelector('.parent-div');
+            const children = parent.children;
+            document.getElementById('traverseOutput').innerHTML = `👶 Traversing DOWN (children):<br>
+            Parent has ${children.length} children elements<br>
+            ${Array.from(children).map((child, i) => `${i + 1}. ${child.tagName} - class: "${child.className}"`).join('<br>')}`;
+        }
+
+        function getNextSibling() {
+            const child = document.querySelector('.child-div');
+            const next = child.nextElementSibling;
+            document.getElementById('traverseOutput').innerHTML = `➡️ Traversing SIDEWAYS:<br>
+            Current: ${child.tagName}<br>
+            nextElementSibling: ${next ? next.tagName + ' with text "' + next.textContent.trim() + '"' : 'None'}`;
+        }
+
+        function getClosest() {
+            const grandchild = document.querySelector('.grandchild');
+            const closest = grandchild.closest('.parent-div');
+            document.getElementById('traverseOutput').innerHTML = `🔍 closest('.parent-div'):<br>
+            Starting from ${grandchild.tagName}<br>
+            Found ancestor: ${closest.tagName} with class "${closest.className}"<br>
+            (closest searches UP the tree for matching selector)`;
+        }
+
+        // ========== SECTION 6: EVENT DELEGATION & TAB COMPONENT ==========
+        const tabContainer = document.getElementById('tabContainer');
+        
+        tabContainer.addEventListener('click', (e) => {
+            const clickedTab = e.target.closest('.tab-btn');
+            if (!clickedTab) return;
+            
+            // Remove active from all tabs
+            document.querySelectorAll('.tab-btn').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.content-panel').forEach(panel => panel.classList.remove('active'));
+            
+            // Activate clicked tab
+            clickedTab.classList.add('active');
+            const panelNum = clickedTab.dataset.tab;
+            document.querySelector(`.panel-${panelNum}`).classList.add('active');
+            
+            document.getElementById('delegationOutput').innerHTML = `✅ Event delegation in action!<br>
+            Clicked tab ${panelNum} - Single parent listener handles all tabs.<br>
+            Method: e.target.closest('.tab-btn') then activate via dataset.`;
+        });
+
+        // ========== SECTION 7: TODO LIST (PRACTICAL DOM) ==========
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            const todoDiv = document.createElement('div');
+            todoDiv.className = 'todo-item';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.style.marginRight = '10px';
+            
+            const span = document.createElement('span');
+            span.textContent = text;
+            span.style.flex = '1';
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.style.marginLeft = 'auto';
+            deleteBtn.onclick = function() {
+                todoDiv.remove();
+                updateTodoOutput();
+            };
+            
+            checkbox.onchange = function() {
+                span.style.textDecoration = this.checked ? 'line-through' : 'none';
+                span.style.opacity = this.checked ? '0.6' : '1';
+                updateTodoOutput();
+            };
+            
+            todoDiv.appendChild(checkbox);
+            todoDiv.appendChild(span);
+            todoDiv.appendChild(deleteBtn);
+            
+            document.getElementById('todoList').appendChild(todoDiv);
+            input.value = '';
+            updateTodoOutput();
+        }
+        
+        function clearAllTodos() {
+            const todoList = document.getElementById('todoList');
+            while (todoList.firstChild) {
+                todoList.removeChild(todoList.firstChild);
+            }
+            updateTodoOutput();
+        }
+        
+        function updateTodoOutput() {
+            const todos = document.querySelectorAll('#todoList .todo-item');
+            document.getElementById('todoOutput').innerHTML = `📋 Todo list has ${todos.length} items<br>
+            ${todos.length > 0 ? 'Each item has: checkbox (toggle) + text + delete button' : 'Add some todos!'}<br>
+            Created with: createElement, appendChild, and event handlers`;
+        }
+        
+        // ========== SECTION 8: SMOOTH SCROLL ==========
+        function smoothScrollToTarget() {
+            const target = document.getElementById('targetSection');
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+            document.getElementById('scrollOutput').innerHTML = `✅ scrollIntoView with behavior: 'smooth'<br>Element scrolled smoothly into view`;
+        }
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            document.getElementById('scrollOutput').innerHTML = `✅ window.scrollTo({ top: 0, behavior: 'smooth' })<br>Scrolled page to top`;
+        }
+        
+        function scrollWithOffset() {
+            const target = document.getElementById('targetSection');
+            const headerOffset = 60;
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+            document.getElementById('scrollOutput').innerHTML = `✅ Scroll with offset using getBoundingClientRect()<br>
+            Calculated position with ${headerOffset}px offset to account for fixed headers`;
+        }
+        
+        function getCoordinates() {
+            const target = document.getElementById('targetSection');
+            const rect = target.getBoundingClientRect();
+            document.getElementById('scrollOutput').innerHTML = `📐 getBoundingClientRect() coordinates:<br>
+            top: ${rect.top}px<br>
+            left: ${rect.left}px<br>
+            width: ${rect.width}px<br>
+            height: ${rect.height}px<br>
+            (relative to viewport)`;
+        }
+        
+        // Initialize output displays
+        updateTodoOutput();
+        
+        // Add some initial styling for demo
+        const style = document.createElement('style');
+        style.textContent = `
+            .active { transform: scale(1.05); transition: all 0.3s; }
+            .highlight { border: 3px solid var(--warning); box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
+            .todo-item:hover { background: var(--bg-tertiary); transition: all 0.2s; }
+            button:active { transform: scale(0.98); }
+        `;
+        document.head.appendChild(style);
+        
+        console.log('✅ DOM Practice Lab Ready! Try all the buttons and experiment!');
+    </script>
+</body>
+</html>

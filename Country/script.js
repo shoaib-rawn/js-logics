@@ -74,7 +74,7 @@ searchBtn.addEventListener("click", async () => {
 
     countryBox.innerHTML = `
       <div class="country-card">
-        <img src="${flags.png}" alt="flag" style="width: 100%; border-radius: 8px;"/>
+        <img src="${flags.png}" alt="flag"/>
         <h3>${name.common}</h3>
         <p><strong>Capital:</strong> ${capital}</p>
         <p><strong>Region:</strong> ${region}</p>

@@ -12,6 +12,7 @@ body {
 
 .container {
   max-width: 800px;
+  width: 100%;
   margin: auto;
 }
 
@@ -26,7 +27,7 @@ h1 {
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
@@ -47,6 +48,8 @@ button {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  flex: 1;
+  min-width: 150px;
 }
 
 button {
@@ -71,13 +74,71 @@ button:hover {
   padding: 15px;
   background: #fafafa;
   border-radius: 10px;
+  text-align: center;
 }
 
 .country-card img {
   width: 100px;
-  margin-bottom: 10px;
+  height: auto;
+  border-radius: 1px;
+  border: 2px solid rgb(11, 11, 11);
+  display: block;
+  margin: 0 auto 10px;
 }
-
 .country-card p {
   margin: 8px 0;
+  word-wrap: break-word;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  body {
+    padding: 20px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+
+  .converter {
+    flex-direction: column;
+  }
+
+  input,
+  select,
+  button {
+    width: 100%;
+    min-width: unset;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  #result {
+    font-size: 16px;
+  }
+
+  .country-card img {
+    width: 80px;
+  }
 }
