@@ -21,7 +21,7 @@ h1 {
   color: #333;
 }
 
-/* Elegant Champagne Gold Text Gradient for Headings */
+/* Heading styles - Aapke colors ko bilkul nahi chhera 👍 */
 h2 {
   white-space: nowrap;
   overflow: hidden;
@@ -51,7 +51,7 @@ h2 {
   align-items: center;
 }
 
-/* Input, Select, Button Controls */
+/* Input, Select, Button Controls Base Settings */
 input, select, button {
   padding: 10px;
   border-radius: 5px;
@@ -59,21 +59,38 @@ input, select, button {
   font-size: 14px;
 }
 
-/* Input gets more dynamic space */
+/* Input gets dynamic space on mobile */
 input {
   flex: 2;
   min-width: 140px;
 }
 
-/* Dropdowns are restricted to look side-by-side and small on mobile */
+/* =======================================================
+   📦 SMART RESPONSIVE DROPDOWNS (MOBILE VS LAPTOP)
+   ======================================================= */
 select {
   flex: 0.8;
   min-width: 85px;
-  max-width: 110px;
   cursor: pointer;
   background-color: #fff;
+  /* By default mobile par dropdown chota rahega */
+  max-width: 105px; 
 }
 
+/* 💻 JAB SCREEN BADI HO (LAPTOP & DESKTOP - 768px se upar) */
+@media (min-width: 768px) {
+  select {
+    flex: 1;            /* Laptop screen par zyada space le */
+    max-width: 180px;   /* Laptop par dropdown automatic bada aur professional dikhe */
+    font-size: 15px;
+  }
+  
+  input {
+    flex: 1.5;          /* Laptop screen par standard size maintain kare */
+  }
+}
+
+/* Buttons Styling */
 button {
   flex: 1;
   min-width: 100px;
