@@ -4,15 +4,23 @@
   box-sizing: border-box;
 }
 
+/* 🚫 Left-right horizontal scroll ko rokne ke liye strict global lock */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: Arial, sans-serif;
   background: #f2f2f2;
-  padding: 30px;
+  padding: 30px 15px; /* Mobile par side packing thodi behtar ki taake chipke na */
 }
 
 .container {
   max-width: 800px;
   margin: auto;
+  width: 100%;
 }
 
 h1 {
@@ -21,7 +29,7 @@ h1 {
   color: #333;
 }
 
-/* Heading styles - Aapke colors ko bilkul nahi chhera 👍 */
+/* Heading styles - Aapke favorite colors ko bilkul nahi chhera 👍 */
 h2 {
   white-space: nowrap;
   overflow: hidden;
@@ -41,104 +49,126 @@ h2 {
   margin-bottom: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  width: 100%;
 }
 
-/* =======================================================
-   🔄 CONVERTER LAYOUT (FORCED LINE 1 FOR INPUT & BOTH DROPDOWNS)
-   ======================================================= */
+/* Converter setup - wrap active kiya taake button neche ja sake */
 .converter {
   display: flex;
-  gap: 6px;            /* Mobile par tight packing ke liye gap thoda kam kiya */
-  flex-wrap: wrap;     /* Convert button ko line 2 par bhejne ke liye wrap active rakha */
+  gap: 6px;            /* Mobile par fields ko jor kar rakhne ke liye chota gap */
+  flex-wrap: wrap;     
   align-items: center;
   width: 100%;
 }
 
-/* Search box styling */
+/* Search box flexible wrapping layout */
 .search-box {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   align-items: center;
+  width: 100%;
 }
 
 /* Input, Select, Button Controls Base Settings */
 input, select, button {
-  padding: 10px;
+  padding: 10px 6px;   /* Extra pixel leakage rokne ke liye tight padding */
   border-radius: 5px;
   border: 1px solid #ccc;
-  font-size: 13px;     /* Mobile par exact fit aane ke liye thoda screen friendly size */
+  font-size: 13px;     /* Mobile friendly sizing */
+  box-sizing: border-box;
 }
 
-/* Input layout */
+/* Input gets controlled space on mobile line 1 */
 input {
   flex: 1.2;
-  min-width: 65px;     /* Width choti rakhi taake dono dropdowns line 1 par hi adjustment lein */
+  min-width: 60px;     /* Chota kiya taake dropdowns ko dhakka de kar line na tode */
 }
 
-/* Both Dropdowns (Forced to stay side-by-side on Line 1) */
+/* =======================================================
+   📦 SMART RESPONSIVE DROPDOWNS (MOBILE LINE 1 LOCK)
+   ======================================================= */
 select {
-  flex: 1;
-  min-width: 65px;     /* 3-letter currency code (USD, PKR) smoothly fit karega */
-  max-width: 80px;     /* Is limit se dropdown mobile par line break nahi karega */
+  flex: 0.9;
+  min-width: 60px;     
   cursor: pointer;
   background-color: #fff;
-  padding: 10px 4px;   /* Dropdown ke andar space control ki */
+  /* Mobile par dropdown ka size limits mein rakha taake sab line 1 par aayein */
+  max-width: 75px; 
+  text-align: center;
 }
 
+/* Arrow layout settings */
 .arrow-box {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-shrink: 0;      /* Arrow kabhi bhi pichak kar layout kharab nahi karega */
+  flex-shrink: 0;      /* Arrow squeeze nahi hoga */
 }
 
 .arrow {
-  font-size: 13px;     /* Mobile par pyara aur chota arrow */
+  font-size: 14px;     /* Mobile par arrow size standard clear aur safe kiya */
 }
 
-/* 🟢 MOBILE CONVERT BUTTON (Always on Line 2 & Full Width) */
+/* Convert Button - forced to line 2 on mobile */
 #convertBtn {
-  flex: 1 1 100%;      /* 100% width ki wajah se automatic 2nd line par lock ho gaya */
+  flex: 1 1 100%;      /* 100% width se automatic line 2 par chala gaya */
   background: #4caf50;
   color: white;
   cursor: pointer;
   border: none;
   font-weight: bold;
-  margin-top: 4px;
+  margin-top: 6px;     /* Pehli line se thoda sa gap */
+  padding: 11px;
+}
+
+/* Baqi general buttons ki styling safe rakhi */
+button {
+  flex: 1;
+  min-width: 100px;
+  background: #4caf50;
+  color: white;
+  cursor: pointer;
+  border: none;
+  font-weight: bold;
 }
 
 button:disabled {
   opacity: 0.7;
 }
 
-/* 💻 LAPTOP & DESKTOP SCREENS (768px se upar automatic 1-line setup) */
+/* 💻 JAB SCREEN BADI HO (LAPTOP & DESKTOP - 768px se upar) */
 @media (min-width: 768px) {
+  body {
+    padding: 30px;
+  }
+
   .converter {
-    flex-wrap: nowrap; /* Laptop par wrapping mukammal khatam */
+    flex-wrap: nowrap; /* Laptop par sab wapis 1 line mein smooth ho jayega */
     gap: 10px;
   }
 
   input, select, button {
     font-size: 14px;
+    padding: 10px;
   }
-
+  
   input {
-    flex: 2;
+    flex: 2;          /* Laptop screen par standard full size */
   }
 
   select {
-    max-width: 150px;  /* Laptop par dropdown wapis bada aur khula show ho */
-    padding: 10px;
+    flex: 1;            
+    max-width: 150px;   /* Laptop par dropdown automatic bada aur professional dikhe */
   }
 
   #convertBtn {
-    flex: 1;           /* Desktop par full-width khatam, layout balance */
+    flex: 1;           /* Laptop par full width khatam, line 1 mein fit */
     margin-top: 0;
   }
-  
+
   .arrow {
-    font-size: 20px;   /* Laptop par normal bada arrow */
+    font-size: 18px;   /* Laptop par wapis big classy look */
   }
 }
 
@@ -166,10 +196,11 @@ button:disabled {
   border-radius: 15px;
   margin-bottom: 20px;
   text-align: center;
+  width: 100%;
 }
 
 .dedication-card h2 {
-  white-space: normal;
+  white-space: normal; 
   word-wrap: break-word;
 }
 
@@ -229,10 +260,6 @@ button:disabled {
 }
 
 /* Global full-width safety */
-html, body {
-  width: 100%;
-}
-
 * {
   max-width: 100%;
 }
