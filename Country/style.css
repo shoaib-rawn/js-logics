@@ -200,12 +200,30 @@ button:disabled {
   word-wrap: break-word;
 }
 
-.photo-frame img {
+/* 🔥 Parent Frame Container Setup - Border perfectly lock karne ke liye */
+.photo-frame {
   width: 150px;
   height: 150px;
   border-radius: 50%;
   border: 3px solid gold;
+  margin: 0 auto 15px auto; /* Center alignment */
+  overflow: hidden;         /* 🚫 Kisi bhi cheez ko is circle se baahir nahi nikalne dega */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;         /* Fallback background color */
+}
+
+/* 🎯 Inside Photo Logic - Parent ke andar auto-adjust aur safe zoom */
+.photo-frame img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
+  
+  /* 🚀 Zoom-In Hack: Image andar hi thodi si bari ho kar top black line ko chhupa degi */
+  transform: scale(1.08); 
 }
 
 /* Close Button Asset - Fixed Mobile Squishing & Perfect Circle 🎯 */
