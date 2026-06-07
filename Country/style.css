@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-/* 🚫 Left-right horizontal scroll ko rokne ke liye strict global lock */
+/* 🚫 Left-right horizontal scroll protection */
 html, body {
   width: 100%;
   max-width: 100%;
@@ -14,7 +14,7 @@ html, body {
 body {
   font-family: Arial, sans-serif;
   background: #f2f2f2;
-  padding: 30px 15px; /* Mobile par side packing thodi behtar ki taake chipke na */
+  padding: 30px 15px; 
 }
 
 .container {
@@ -29,7 +29,7 @@ h1 {
   color: #333;
 }
 
-/* Heading styles - Aapke favorite colors ko bilkul nahi chhera 👍 */
+/* Heading styles - Aapke favorite dark-rust colors 👍 */
 h2 {
   white-space: nowrap;
   overflow: hidden;
@@ -52,16 +52,16 @@ h2 {
   width: 100%;
 }
 
-/* Converter setup - wrap active kiya taake button neche ja sake */
+/* Converter setup - wrap active for convert button on line 2 */
 .converter {
   display: flex;
-  gap: 6px;            /* Mobile par fields ko jor kar rakhne ke liye chota gap */
+  gap: 5px;            
   flex-wrap: wrap;     
   align-items: center;
   width: 100%;
 }
 
-/* Search box flexible wrapping layout */
+/* Search box styling */
 .search-box {
   display: flex;
   gap: 10px;
@@ -70,59 +70,73 @@ h2 {
   width: 100%;
 }
 
-/* Input, Select, Button Controls Base Settings */
+/* Input, Select, Button Controls Settings */
 input, select, button {
-  padding: 10px 6px;   /* Extra pixel leakage rokne ke liye tight padding */
+  padding: 10px 4px;   
   border-radius: 5px;
   border: 1px solid #ccc;
-  font-size: 13px;     /* Mobile friendly sizing */
+  font-size: 13px;     
   box-sizing: border-box;
 }
 
-/* Input gets controlled space on mobile line 1 */
 input {
-  flex: 1.2;
-  min-width: 60px;     /* Chota kiya taake dropdowns ko dhakka de kar line na tode */
+  flex: 1.1;
+  min-width: 55px;     
 }
 
 /* =======================================================
-   📦 SMART RESPONSIVE DROPDOWNS (MOBILE LINE 1 LOCK)
+   📦 FLAG IMAGES & DROPDOWN CONTAINERS (LINE 1 LOCK)
    ======================================================= */
-select {
-  flex: 0.9;
-  min-width: 60px;     
-  cursor: pointer;
-  background-color: #fff;
-  /* Mobile par dropdown ka size limits mein rakha taake sab line 1 par aayein */
-  max-width: 75px; 
-  text-align: center;
+.select-box {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
 }
 
-/* Arrow layout settings */
+/* 🎯 Screenshot jaisa gol dynamic flag image code */
+.flag-icon {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  flex-shrink: 0;
+}
+
+select {
+  flex: 1;
+  min-width: 55px;     
+  max-width: 68px; /* Safe lock mobile ke liye */
+  cursor: pointer;
+  background-color: #fff;
+  font-weight: bold;
+  border: none; /* Select ka boundary box border clean look ke liye */
+}
+
 .arrow-box {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-shrink: 0;      /* Arrow squeeze nahi hoga */
+  flex-shrink: 0;      
 }
 
 .arrow {
-  font-size: 14px;     /* Mobile par arrow size standard clear aur safe kiya */
+  font-size: 13px;     
 }
 
 /* Convert Button - forced to line 2 on mobile */
 #convertBtn {
-  flex: 1 1 100%;      /* 100% width se automatic line 2 par chala gaya */
+  flex: 1 1 100%;      
   background: #4caf50;
   color: white;
   cursor: pointer;
   border: none;
   font-weight: bold;
-  margin-top: 6px;     /* Pehli line se thoda sa gap */
+  margin-top: 6px;     
   padding: 11px;
 }
 
-/* Baqi general buttons ki styling safe rakhi */
 button {
   flex: 1;
   min-width: 100px;
@@ -137,14 +151,14 @@ button:disabled {
   opacity: 0.7;
 }
 
-/* 💻 JAB SCREEN BADI HO (LAPTOP & DESKTOP - 768px se upar) */
+/* 💻 LAPTOP & DESKTOP SCREENS */
 @media (min-width: 768px) {
   body {
     padding: 30px;
   }
 
   .converter {
-    flex-wrap: nowrap; /* Laptop par sab wapis 1 line mein smooth ho jayega */
+    flex-wrap: nowrap; 
     gap: 10px;
   }
 
@@ -154,21 +168,30 @@ button:disabled {
   }
   
   input {
-    flex: 2;          /* Laptop screen par standard full size */
+    flex: 2;          
+  }
+
+  .select-box {
+    gap: 6px;
+  }
+
+  .flag-icon {
+    width: 30px;
+    height: 30px;
   }
 
   select {
-    flex: 1;            
-    max-width: 150px;   /* Laptop par dropdown automatic bada aur professional dikhe */
+    max-width: 160px;   /* Desktop par dropdown full names ke sath bada dikhe */
+    border: 1px solid #ccc;
   }
 
   #convertBtn {
-    flex: 1;           /* Laptop par full width khatam, line 1 mein fit */
+    flex: 1;           
     margin-top: 0;
   }
 
   .arrow {
-    font-size: 18px;   /* Laptop par wapis big classy look */
+    font-size: 18px;   
   }
 }
 
@@ -259,7 +282,6 @@ button:disabled {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Global full-width safety */
 * {
   max-width: 100%;
 }

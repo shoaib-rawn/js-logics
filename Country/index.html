@@ -17,7 +17,7 @@
     <div class="photo-frame">
       <img src="jan.png" alt="Uncle Photo">
     </div>
-   
+    
     <h2>💖 Dedicated to My Family Member</h2>
     <p>
       This is my first HTML, CSS, and JavaScript project, created with love and respect.  
@@ -34,15 +34,21 @@
     <h2>💱 Currency Converter</h2>
 
     <div class="converter">
-      <input type="number" id="amount" value="1"/>
+      <input type="number" id="amount" value="1" min="1" />
 
-      <select id="fromCurrency"></select>
-
-      <div class="arrow-box">
-<span class="arrow">⇄</span>
+      <div class="select-box">
+        <img id="fromFlag" class="flag-icon" src="https://flagsapi.com/US/flat/64.png" alt="flag">
+        <select id="fromCurrency"></select>
       </div>
 
-      <select id="toCurrency"></select>
+      <div class="arrow-box">
+        <span class="arrow">⇄</span>
+      </div>
+
+      <div class="select-box">
+        <img id="toFlag" class="flag-icon" src="https://flagsapi.com/PK/flat/64.png" alt="flag">
+        <select id="toCurrency"></select>
+      </div>
 
       <button id="convertBtn">Convert</button>
     </div>
