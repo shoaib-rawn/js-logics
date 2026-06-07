@@ -236,26 +236,32 @@ button:disabled {
 }
 
 /* Close Button configuration */
+/* Close Button configuration - Mobile screen width fix 🎯 */
 .close-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 8px; 
-  min-width: 8px;
-  height: 20px;
+  width: 24px;         /* Fixed responsive square width */
+  min-width: 24px;
+  height: 24px;        /* Height perfectly aligned with width */
   border: none;
-  border-radius: 3px; 
+   /* Perfect circle for a professional close asset button */
   background: #ff3b3b;
   color: white;
-  font-size: 10px; 
+  font-size: 11px;     
   font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   transition: 0.2s ease;
+  z-index: 10;         /* Card ke upar clear layer maintain rakhne ke liye */
 }
 
+.close-btn:hover {
+  background: #e60000;
+  transform: scale(1.1); /* Hover par smooth premium bounce animation */
+}
 .close-btn:hover {
   background: #e60000;
   transform: scale(1.05);
