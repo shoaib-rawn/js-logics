@@ -1,7 +1,11 @@
+/* ==========================================
+   🌐 GLOBAL SETUP & CORE BODY STYLES
+   ========================================== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  max-width: 100%;
 }
 
 /* 🚫 Left-right horizontal scroll protection */
@@ -23,13 +27,21 @@ body {
   width: 100%;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ==========================================
+   Typography & Typography Brand Color
+   ========================================== */
 h1 {
   text-align: center;
   margin-bottom: 20px;
   color: #333;
 }
 
-/* Heading styles - Aapke favorite dark-rust colors 👍 */
+/* Heading styles - Premium Dark-Rust Colors 🎯 */
 h2 {
   white-space: nowrap;
   overflow: hidden;
@@ -52,7 +64,9 @@ h2 {
   width: 100%;
 }
 
-/* Converter setup - wrap active for convert button on line 2 */
+/* ==========================================
+   📦 CONVERTER ROW & CONTROLS LAYOUT
+   ========================================== */
 .converter {
   display: flex;
   gap: 5px;            
@@ -61,7 +75,6 @@ h2 {
   width: 100%;
 }
 
-/* Search box styling */
 .search-box {
   display: flex;
   gap: 10px;
@@ -70,7 +83,7 @@ h2 {
   width: 100%;
 }
 
-/* Input, Select, Button Controls Settings */
+/* Input, Select, Button Form Controls Settings */
 input, select, button {
   padding: 10px 4px;   
   border-radius: 5px;
@@ -84,9 +97,9 @@ input {
   min-width: 55px;     
 }
 
-/* =======================================================
-   📦 FLAG IMAGES & DROPDOWN CONTAINERS (LINE 1 LOCK)
-   ======================================================= */
+/* ==========================================
+   🎯 FLAG ICON IMAGE & SELECT FIELDS DYNAMICS
+   ========================================== */
 .select-box {
   display: flex;
   align-items: center;
@@ -94,7 +107,6 @@ input {
   flex: 1;
 }
 
-/* 🎯 Screenshot jaisa gol dynamic flag image code */
 .flag-icon {
   width: 25px;
   height: 25px;
@@ -107,11 +119,23 @@ input {
 select {
   flex: 1;
   min-width: 55px;     
-  max-width: 68px; /* Safe lock mobile ke liye */
+  max-width: 68px;           /* Safe lock mobile configuration */
   cursor: pointer;
   background-color: #fff;
   font-weight: bold;
-  border: none; /* Select ka boundary box border clean look ke liye */
+  border: none;              /* Clear look border box cut */
+  text-align: center;
+  padding-right: 2px;
+  
+  /* 🚫 ARROW REMOVAL SYSTEM (MOBILE) */
+  -webkit-appearance: none;  /* Safari/Chrome */
+  -moz-appearance: none;     /* Firefox */
+  appearance: none;          /* Modern Standard Browsers */
+}
+
+/* Internet Explorer Custom Native Arrow Hack */
+select::-ms-expand {
+  display: none;
 }
 
 .arrow-box {
@@ -125,7 +149,7 @@ select {
   font-size: 13px;     
 }
 
-/* Convert Button - forced to line 2 on mobile */
+/* Convert Action Trigger configuration */
 #convertBtn {
   flex: 1 1 100%;      
   background: #4caf50;
@@ -151,7 +175,110 @@ button:disabled {
   opacity: 0.7;
 }
 
-/* 💻 LAPTOP & DESKTOP SCREENS */
+/*Result Box Typography Setup*/
+#result {
+  margin-top: 15px; 
+  font-size: 14px; 
+  line-height: 1.6;
+}
+
+/* ==========================================
+   🥰 FAMILY MEMBER DEDICATION CARD COMPONENT
+   ========================================== */
+.dedication-card {
+  position: relative;
+  background: linear-gradient(135deg, #fff8e1, #fff);
+  padding: 25px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
+}
+
+.dedication-card h2 {
+  white-space: normal; 
+  word-wrap: break-word;
+}
+
+.photo-frame img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 3px solid gold;
+  object-fit: cover;
+}
+
+/* Close Button Asset - Fixed Mobile Squishing & Perfect Circle 🎯 */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 24px;         
+  min-width: 24px;
+  height: 24px;        
+  border: none;
+  border-radius: 50%;  
+  background: #ff3b3b;
+  color: white;
+  font-size: 11px;     
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+  z-index: 10;         
+}
+
+.close-btn:hover {
+  background: #e60000;
+  transform: scale(1.1); /* Smooth modern scale effect */
+}
+
+/* ==========================================
+   🏳 RESEARCH SUB-CARD INFO LAYOUT
+   ========================================== */
+.country-card {
+  margin-top: 15px;
+  padding: 15px;
+  background: #fafafa;
+  border-radius: 10px;
+  text-align: center;
+  animation: fadeIn 0.4s ease;
+}
+
+.country-card img {
+  width: 90px;
+  border: 2px solid #111;
+  margin-bottom: 10px;
+}
+
+/* ==========================================
+   🌀 WEB ANIMATIONS SYSTEMS
+   ========================================== */
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.1s linear infinite;
+  margin-right: 6px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================
+   💻 DESKTOP & LAPTOP SCREEN BREAKPOINT
+   ========================================== */
 @media (min-width: 768px) {
   body {
     padding: 30px;
@@ -181,8 +308,13 @@ button:disabled {
   }
 
   select {
-    max-width: 160px;   /* Desktop par dropdown full names ke sath bada dikhe */
+    max-width: 160px;   /* Expanded view text bounds */
     border: 1px solid #ccc;
+    
+    /* 🚫 ARROW REMOVAL SYSTEM (DESKTOP) */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
   }
 
   #convertBtn {
@@ -193,106 +325,4 @@ button:disabled {
   .arrow {
     font-size: 18px;   
   }
-}
-
-/* Country card styles */
-.country-card {
-  margin-top: 15px;
-  padding: 15px;
-  background: #fafafa;
-  border-radius: 10px;
-  text-align: center;
-  animation: fadeIn 0.4s ease;
-}
-
-.country-card img {
-  width: 90px;
-  border: 2px solid #111;
-  margin-bottom: 10px;
-}
-
-/* Dedication card styles */
-.dedication-card {
-  position: relative;
-  background: linear-gradient(135deg, #fff8e1, #fff);
-  padding: 25px;
-  border-radius: 15px;
-  margin-bottom: 20px;
-  text-align: center;
-  width: 100%;
-}
-
-.dedication-card h2 {
-  white-space: normal; 
-  word-wrap: break-word;
-}
-
-.photo-frame img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 3px solid gold;
-  object-fit: cover;
-}
-
-/* Close Button configuration */
-/* Close Button configuration - Mobile screen width fix 🎯 */
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 24px;         /* Fixed responsive square width */
-  min-width: 24px;
-  height: 24px;        /* Height perfectly aligned with width */
-  border: none;
-   /* Perfect circle for a professional close asset button */
-  background: #ff3b3b;
-  color: white;
-  font-size: 11px;     
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: 0.2s ease;
-  z-index: 10;         /* Card ke upar clear layer maintain rakhne ke liye */
-}
-
-.close-btn:hover {
-  background: #e60000;
-  transform: scale(1.1); /* Hover par smooth premium bounce animation */
-}
-.close-btn:hover {
-  background: #e60000;
-  transform: scale(1.05);
-}
-
-/* Animations */
-.loading-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid white;
-  border-top: 2px solid transparent;
-  border-radius: 50%;
-  display: inline-block;
-  animation: spin 0.1s linear infinite;
-  margin-right: 6px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-* {
-  max-width: 100%;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
 }
