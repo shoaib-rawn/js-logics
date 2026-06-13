@@ -383,7 +383,7 @@ searchBtn.addEventListener("click", async () => {
           <div>
             <h3 style="margin: 0; font-size: 2rem; color: #1a3a4a;">${displayName}</h3>
             <p style="margin: 5px 0 0; font-size: 0.7rem;">
-              <span style="background: #28a74520; padding: 2px 8px; border-radius: 20px;">✅ Data from verified sources (No CORS issues)</span>
+              <span style="background: #28a74520; padding: 2px 8px; border-radius: 20px;">✅ Data from verified sources</span>
             </p>
           </div>
         </div>
