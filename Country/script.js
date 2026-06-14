@@ -249,7 +249,6 @@ setInterval(async () => {
     updateResult(lastAmount, lastFrom, lastTo);
   }
 }, 300000);
-
 // ==========================================
 // 🌍 COUNTRY DATA (NO CORS - FULLY WORKING)
 // ==========================================
@@ -301,6 +300,70 @@ async function getWeather(lat, lon) {
     console.log("Weather fetch failed");
   }
   return null;
+}
+
+// FIXED: Get accurate local time using TimeZoneDB API (free, no key required for basic use)
+async function getLocalTimeWithTheme(lat, lon, countryName) {
+  if (!lat || !lon) return { timeText: "Calculating...", isDay: true, period: "Day", greeting: "Good Day! ☀️", hours: 12 };
+  
+  try {
+    // Using geonames.org free timezone API (no key required for demo usage)
+    const response = await fetch(`https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lon}&username=demo`);
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.time) {
+        const countryTime = new Date(data.time);
+        const hours = countryTime.getHours();
+        
+        // Determine if it's day or night (6 AM to 6 PM = Day)
+        const isDay = hours >= 6 && hours < 18;
+        const period = isDay ? "Day 🌞" : "Night 🌙";
+        const greeting = isDay ? "Good Day! ☀️" : "Good Night! 🌙✨";
+        
+        const timeText = countryTime.toLocaleString("en-US", { 
+          dateStyle: "full", 
+          timeStyle: "medium"
+        });
+        
+        return { timeText, isDay, period, greeting, hours };
+      }
+    }
+    throw new Error("GeoNames failed");
+  } catch (err) {
+    // Fallback: Calculate using longitude (more accurate than before)
+    try {
+      const offsetHours = Math.round(lon / 15);
+      const now = new Date();
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const countryTime = new Date(utc + (offsetHours * 3600000));
+      const hours = countryTime.getHours();
+      
+      const isDay = hours >= 6 && hours < 18;
+      const period = isDay ? "Day 🌞" : "Night 🌙";
+      const greeting = isDay ? "Good Day! ☀️" : "Good Night! 🌙✨";
+      const timeText = countryTime.toLocaleString("en-US", { 
+        dateStyle: "full", 
+        timeStyle: "medium" 
+      });
+      
+      return { timeText, isDay, period, greeting, hours };
+    } catch (fallbackErr) {
+      console.log("All timezone methods failed");
+      const now = new Date();
+      const hours = now.getHours();
+      const isDay = hours >= 6 && hours < 18;
+      const period = isDay ? "Day 🌞" : "Night 🌙";
+      const greeting = isDay ? "Good Day! ☀️" : "Good Night! 🌙✨";
+      
+      return { 
+        timeText: now.toLocaleString("en-US", { dateStyle: "full", timeStyle: "medium" }), 
+        isDay, 
+        period, 
+        greeting,
+        hours 
+      };
+    }
+  }
 }
 
 searchBtn.addEventListener("click", async () => {
@@ -358,16 +421,31 @@ searchBtn.addEventListener("click", async () => {
       if (weather) weatherText = weather;
     }
     
-    // Calculate local time based on longitude
-    let timeText = "Calculating...";
-    const now = new Date();
-    if (countryInfo.lon) {
-      const offset = Math.round(countryInfo.lon / 15);
-      const localTime = new Date(now.getTime() + (offset * 3600000));
-      timeText = localTime.toLocaleString("en-US", { dateStyle: "full", timeStyle: "medium" });
-    } else {
-      timeText = now.toLocaleString("en-US", { dateStyle: "full", timeStyle: "medium" });
-    }
+    // Get local time with day/night detection
+    const timeData = await getLocalTimeWithTheme(countryInfo.lat, countryInfo.lon, searchKey);
+    const timeText = timeData.timeText;
+    const isDay = timeData.isDay;
+    const period = timeData.period;
+    const greeting = timeData.greeting;
+    
+    // Dynamic theme based on day/night
+    const themeStyles = isDay ? {
+      mainBg: "linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)",
+      cardBg: "#fff9f0",
+      accent: "#ff9800",
+      textColor: "#1a3a4a",
+      badgeBg: "#28a74520",
+      badgeText: "#155724",
+      badgeBorder: "#28a745"
+    } : {
+      mainBg: "linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)",
+      cardBg: "#1a1a3e",
+      accent: "#e94560",
+      textColor: "#e0e0e0",
+      badgeBg: "#e9456030",
+      badgeText: "#ff6b8a",
+      badgeBorder: "#e94560"
+    };
     
     const displayName = searchKey.split(' ').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
@@ -377,53 +455,73 @@ searchBtn.addEventListener("click", async () => {
     const popText = countryInfo.population.toLocaleString();
     
     countryBox.innerHTML = `
-      <div style="background: white; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); animation: fadeIn 0.3s ease;">
-        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-          <img src="${flagUrl}" alt="Flag" style="width: 70px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"/>
-          <div>
-            <h3 style="margin: 0; font-size: 2rem; color: #1a3a4a;">${displayName}</h3>
-            <p style="margin: 5px 0 0; font-size: 0.7rem;">
-              <span style="background: #28a74520; padding: 2px 8px; border-radius: 20px;">✅ Data from verified sources</span>
-            </p>
+      <div style="margin-top: 30px;">
+        <div style="background: ${themeStyles.mainBg}; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); animation: fadeIn 0.3s ease; transition: all 0.3s ease;">
+          
+          <!-- Header with greeting message -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 0.8rem;">
+              <span style="font-size: 2rem;">${isDay ? "☀️" : "🌙"}</span>
+              <span style="font-weight: bold; color: ${themeStyles.accent}; background: ${isDay ? "#fff3e0" : "#2a2a5e"}; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem;">
+                ${greeting}
+              </span>
+            </div>
+            <div style="font-size: 0.8rem; color: ${themeStyles.textColor}; opacity: 0.7;">
+              ${period} • Local Time: ${timeText.split(',')[0]}
+            </div>
           </div>
+          
+          <!-- Main Country Info -->
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <img src="${flagUrl}" alt="Flag" style="width: 70px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"/>
+            <div>
+              <h3 style="margin: 0; font-size: 2rem; color: ${themeStyles.textColor};">${displayName}</h3>
+              <p style="margin: 5px 0 0; font-size: 0.75rem;">
+                <span style="display: inline-block; background: ${themeStyles.badgeBg}; color: ${themeStyles.badgeText}; padding: 4px 12px; border-radius: 20px; border: 1px solid ${themeStyles.badgeBorder}; font-weight: 500;">
+                  ✅ Data from verified sources
+                </span>
+              </p>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+            
+            <!-- Country Info Card -->
+            <div style="background: ${themeStyles.cardBg}; border-radius: 1rem; padding: 1rem; color: ${themeStyles.textColor}; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <h4 style="margin: 0 0 10px 0; color: ${themeStyles.accent};">📋 Country Information</h4>
+              <p><strong>🏙️ Capital:</strong> <span style="color: ${themeStyles.accent}; font-weight: bold;">${countryInfo.capital}</span></p>
+              <p><strong>🌍 Region:</strong> ${countryInfo.region} ${countryInfo.subregion ? `(${countryInfo.subregion})` : ''}</p>
+              <p><strong>👥 Population:</strong> ${popText}</p>
+              <p><strong>💱 Currency:</strong> ${countryInfo.currency} (${countryInfo.currencyCode})</p>
+              <p><strong>🗣️ Languages:</strong> ${countryInfo.language}</p>
+            </div>
+            
+            <!-- COVID Stats Card -->
+            <div style="background: ${themeStyles.cardBg}; border-radius: 1rem; padding: 1rem; color: ${themeStyles.textColor}; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <h4 style="margin: 0 0 10px 0; color: ${themeStyles.accent};">🦠 COVID-19 Statistics</h4>
+              ${covidData ? `
+                <p><strong>🦠 Total Cases:</strong> ${covidData.cases?.toLocaleString() || 'N/A'}</p>
+                <p><strong>📈 Today Cases:</strong> ${covidData.todayCases?.toLocaleString() || 'N/A'}</p>
+                <p><strong>💀 Deaths:</strong> ${covidData.deaths?.toLocaleString() || 'N/A'}</p>
+                <p><strong>❤️ Recovered:</strong> ${covidData.recovered?.toLocaleString() || 'N/A'}</p>
+                <p><strong>⚠️ Active Cases:</strong> ${covidData.active?.toLocaleString() || 'N/A'}</p>
+              ` : '<p>COVID data temporarily unavailable</p>'}
+            </div>
+            
+            <!-- Weather & Time Card -->
+            <div style="background: ${themeStyles.cardBg}; border-radius: 1rem; padding: 1rem; color: ${themeStyles.textColor}; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <h4 style="margin: 0 0 10px 0; color: ${themeStyles.accent};">🌤️ Live Weather & Time</h4>
+              <p><strong>🌡️ Current Weather:</strong> ${weatherText}</p>
+              <p><strong>🕐 Local Time:</strong> ${timeText}</p>
+              <p><strong>${isDay ? "☀️ Daytime" : "🌙 Nighttime"}:</strong> ${isDay ? "Enjoy the daylight! 🌞" : "Stars are shining! ✨"}</p>
+              ${countryInfo.lat && countryInfo.lon ? `<p><small>📍 Coordinates: ${countryInfo.lat.toFixed(2)}°, ${countryInfo.lon.toFixed(2)}°</small></p>` : ''}
+            </div>
+          </div>
+          
+          <p style="margin-top: 1rem; padding: 0.5rem; background: ${isDay ? "#e7f3ff" : "#0a0a2a"}; border-radius: 0.5rem; font-size: 0.7rem; text-align: center; color: ${themeStyles.textColor}; opacity: 0.8;">
+            🌐 Data Sources: Country Database + Disease.sh API (Live COVID) + Open-Meteo Weather API
+          </p>
         </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
-          
-          <!-- Country Info -->
-          <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 1rem; padding: 1rem;">
-            <h4 style="margin: 0 0 10px 0;">📋 Country Information</h4>
-            <p><strong>🏙️ Capital:</strong> <span style="color: #dc3545; font-weight: bold; font-size: 1.1rem;">${countryInfo.capital}</span></p>
-            <p><strong>🌍 Region:</strong> ${countryInfo.region} ${countryInfo.subregion ? `(${countryInfo.subregion})` : ''}</p>
-            <p><strong>👥 Population:</strong> ${popText}</p>
-            <p><strong>💱 Currency:</strong> ${countryInfo.currency} (${countryInfo.currencyCode})</p>
-            <p><strong>🗣️ Languages:</strong> ${countryInfo.language}</p>
-          </div>
-          
-          <!-- COVID Stats -->
-          <div style="background: linear-gradient(135deg, #11998e15 0%, #38ef7d15 100%); border-radius: 1rem; padding: 1rem;">
-            <h4 style="margin: 0 0 10px 0;">🦠 COVID-19 Statistics</h4>
-            ${covidData ? `
-              <p><strong>🦠 Total Cases:</strong> ${covidData.cases?.toLocaleString() || 'N/A'}</p>
-              <p><strong>📈 Today Cases:</strong> ${covidData.todayCases?.toLocaleString() || 'N/A'}</p>
-              <p><strong>💀 Deaths:</strong> ${covidData.deaths?.toLocaleString() || 'N/A'}</p>
-              <p><strong>❤️ Recovered:</strong> ${covidData.recovered?.toLocaleString() || 'N/A'}</p>
-              <p><strong>⚠️ Active Cases:</strong> ${covidData.active?.toLocaleString() || 'N/A'}</p>
-            ` : '<p>COVID data temporarily unavailable</p>'}
-          </div>
-          
-          <!-- Weather & Time -->
-          <div style="background: linear-gradient(135deg, #f093fb15 0%, #f5576c15 100%); border-radius: 1rem; padding: 1rem;">
-            <h4 style="margin: 0 0 10px 0;">🌤️ Live Weather & Time</h4>
-            <p><strong>🌡️ Current Weather:</strong> ${weatherText}</p>
-            <p><strong>🕐 Local Time:</strong> ${timeText}</p>
-            ${countryInfo.lat && countryInfo.lon ? `<p><small>📍 Coordinates: ${countryInfo.lat.toFixed(2)}°, ${countryInfo.lon.toFixed(2)}°</small></p>` : ''}
-          </div>
-        </div>
-        
-        <p style="margin-top: 1rem; padding: 0.5rem; background: #e7f3ff; border-radius: 0.5rem; font-size: 0.7rem; text-align: center; color: #0066cc;">
-          🌐 Data Sources: Country Database + Disease.sh API (Live COVID) + Open-Meteo Weather API
-        </p>
       </div>
     `;
     
@@ -434,9 +532,11 @@ searchBtn.addEventListener("click", async () => {
   
   // Country not in database
   countryBox.innerHTML = `
-    <div style="background: #fff3cd; border-radius: 1rem; padding: 1rem;">
-      <strong>⚠️ Country data not found: "${countryName}"</strong><br>
-      <small>Supported countries: ${Object.keys(countryDatabase).slice(0, 10).join(", ")} and more...</small>
+    <div style="margin-top: 30px;">
+      <div style="background: #fff3cd; border-radius: 1rem; padding: 1rem;">
+        <strong>⚠️ Country data not found: "${countryName}"</strong><br>
+        <small>Supported countries: ${Object.keys(countryDatabase).slice(0, 10).join(", ")} and more...</small>
+      </div>
     </div>
   `;
   setSearchLoading(false);
