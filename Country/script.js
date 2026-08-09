@@ -477,22 +477,58 @@ searchBtn.addEventListener("click", async () => {
       window.liveCountryCache = await response.json();
     }
 
-    const country = window.liveCountryCache.find(c => c.name.toLowerCase() === countryName.toLowerCase());
-
-    if (!country) {
-      throw new Error("Country not found in Live API");
-    }
-
-    const currencyCode = country.currency || "N/A";
-    const currencyName = country.currency_name || "N/A";
-    const languages = country.native || "N/A";
-    const population = Number(country.population || 0).toLocaleString();
-    const flag = `https://flagsapi.com/${country.iso2.toUpperCase()}/flat/64.png`;
+    const countryNameLower = countryName.toLowerCase();
     
-    // Some countries have multiple timezones, we get the first one for the local time calculation
-    const tzList = country.timezones ? country.timezones.map(t => t.zoneName).join(", ") : "N/A";
-    const firstTz = country.timezones && country.timezones.length > 0 ? country.timezones[0].zoneName : null;
-    const localTime = firstTz ? getCurrentTime(firstTz) : "Time unknown";
+    // Check if we have perfect hand-tuned data in our offline database first
+    const offlineData = countryDatabase[countryNameLower];
+    let finalCountry = null;
+
+    if (offlineData) {
+      finalCountry = {
+        name: countryNameLower,
+        capital: offlineData.capital,
+        region: offlineData.region,
+        subregion: offlineData.subregion,
+        population: Number(offlineData.population || 0).toLocaleString(),
+        currencyName: offlineData.currency,
+        currencyCode: offlineData.currencyCode,
+        languages: offlineData.language,
+        flag: `https://flagsapi.com/${offlineData.flag.toUpperCase()}/flat/64.png`,
+        timezones: offlineData.timezone,
+        localTime: getCurrentTime(offlineData.timezone),
+        tld: "N/A",
+        lat: offlineData.lat,
+        lon: offlineData.lon
+      };
+    } else {
+      // Fallback to the Github Global Database
+      const country = window.liveCountryCache.find(c => c.name.toLowerCase() === countryNameLower);
+      if (!country) throw new Error("Country not found in Live API");
+
+      // Smart timezone selector: Try to find timezone matching capital
+      let bestTz = null;
+      if (country.timezones && country.timezones.length > 0) {
+        bestTz = country.timezones.find(t => country.capital && t.zoneName.includes(country.capital));
+        if (!bestTz) bestTz = country.timezones[0];
+      }
+
+      finalCountry = {
+        name: country.name,
+        capital: country.capital || "N/A",
+        region: country.region || "N/A",
+        subregion: country.subregion || "N/A",
+        population: Number(country.population || 0).toLocaleString(),
+        currencyName: country.currency_name || "N/A",
+        currencyCode: country.currency || "N/A",
+        languages: country.native || "N/A",
+        flag: `https://flagsapi.com/${country.iso2.toUpperCase()}/flat/64.png`,
+        timezones: country.timezones ? country.timezones.map(t => t.zoneName).join(", ") : "N/A",
+        localTime: bestTz ? getCurrentTime(bestTz.zoneName) : "Time unknown",
+        tld: country.tld || "N/A",
+        lat: country.latitude || "N/A",
+        lon: country.longitude || "N/A"
+      };
+    }
 
     countryBox.innerHTML = `
       <div style="
@@ -510,8 +546,8 @@ searchBtn.addEventListener("click", async () => {
           flex-wrap:wrap;
         ">
           <img
-            src="${flag}"
-            alt="${country.name}"
+            src="${finalCountry.flag}"
+            alt="${finalCountry.name}"
             style="
               width:90px;
               border-radius:10px;
@@ -520,37 +556,37 @@ searchBtn.addEventListener("click", async () => {
           >
 
           <div>
-            <h2 style="margin:0;">
-              ${country.name}
+            <h2 style="margin:0; text-transform:capitalize;">
+              ${finalCountry.name}
             </h2>
 
             <p style="margin:5px 0;">
-              ${country.region || "N/A"}
+              ${finalCountry.region}
             </p>
           </div>
         </div>
 
         <hr style="margin:20px 0;">
 
-        <p><strong>🏙 Capital:</strong> ${country.capital || "N/A"}</p>
+        <p><strong>🏙 Capital:</strong> ${finalCountry.capital}</p>
 
-        <p><strong>🌍 Region:</strong> ${country.region || "N/A"} (${country.subregion || "N/A"})</p>
+        <p><strong>🌍 Region:</strong> ${finalCountry.region} (${finalCountry.subregion})</p>
 
-        <p><strong>👥 Population:</strong> ${population}</p>
+        <p><strong>👥 Population:</strong> ${finalCountry.population}</p>
 
-        <p><strong>💱 Currency:</strong> ${currencyName} (${currencyCode})</p>
+        <p><strong>💱 Currency:</strong> ${finalCountry.currencyName} (${finalCountry.currencyCode})</p>
 
-        <p><strong>🗣 Languages:</strong> ${languages}</p>
+        <p><strong>🗣 Languages:</strong> ${finalCountry.languages}</p>
 
-        <p><strong>🕐 Timezones:</strong> ${tzList}</p>
+        <p><strong>🕐 Timezones:</strong> ${finalCountry.timezones}</p>
 
-        <p><strong>🕰 Local Time:</strong> ${localTime}</p>
+        <p><strong>🕰 Local Time:</strong> ${finalCountry.localTime}</p>
 
-        <p><strong>🌐 Domain:</strong> ${country.tld || "N/A"}</p>
+        <p><strong>🌐 Domain:</strong> ${finalCountry.tld}</p>
 
-        <p><strong>📍 Latitude:</strong> ${country.latitude || "N/A"}</p>
+        <p><strong>📍 Latitude:</strong> ${finalCountry.lat}</p>
 
-        <p><strong>📍 Longitude:</strong> ${country.longitude || "N/A"}</p>
+        <p><strong>📍 Longitude:</strong> ${finalCountry.lon}</p>
 
       </div>
     `;
