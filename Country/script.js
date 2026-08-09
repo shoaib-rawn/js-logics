@@ -383,49 +383,39 @@ searchBtn.addEventListener("click", async () => {
   countryBox.innerHTML = "⏳ Fetching country data...";
 
   try {
+    // We use a highly reliable static JSON file on GitHub that allows CORS everywhere,
+    // even from local file:/// URLs, so no Live Server is needed!
     const response = await fetch(
-      `https://api.restcountries.com/countries/v5?q=${encodeURIComponent(
-        countryName
-      )}`,
-      {
-        headers: {
-          Authorization:
-            "Bearer rc_live_78dddb606fa44f879fdfdef4c826cba7",
-        },
-      }
+      "https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/json/countries.json"
     );
 
     if (!response.ok) {
-      throw new Error("Failed");
+      throw new Error("Failed to load country database");
     }
 
-    const json = await response.json();
+    const allCountries = await response.json();
+    const searchTarget = countryName.toLowerCase().trim();
 
-    if (!json.data || !json.data.objects || !json.data.objects.length) {
+    // Find the country in the JSON array
+    const country = allCountries.find(
+      (c) => c.name.toLowerCase() === searchTarget || 
+             (c.iso2 && c.iso2.toLowerCase() === searchTarget)
+    );
+
+    if (!country) {
       throw new Error("Country not found");
     }
 
-    const country = json.data.objects[0];
+    const currencyCode = country.currency || "N/A";
+    const currencyName = country.currency_name || "N/A";
+    const population = country.population ? Number(country.population).toLocaleString() : "N/A";
+    
+    // We can use the ISO2 code to get the flag from flagsapi.com
+    const flag = country.iso2 ? `https://flagsapi.com/${country.iso2}/flat/64.png` : "";
 
-    const currencyCode =
-      country.currencies && country.currencies.length > 0
-        ? country.currencies[0].code
-        : "N/A";
-
-    const currencyName =
-      country.currencies && country.currencies.length > 0
-        ? country.currencies[0].name
-        : "N/A";
-
-    const languages = country.languages
-      ? country.languages.map(lang => lang.name).join(", ")
+    const timezones = country.timezones && country.timezones.length > 0 
+      ? country.timezones.map(tz => tz.zoneName).join(", ") 
       : "N/A";
-
-    const population = Number(
-      country.population || 0
-    ).toLocaleString();
-
-    const flag = country.flag?.url_png || country.flag?.url_svg;
 
     countryBox.innerHTML = `
       <div style="
@@ -444,7 +434,7 @@ searchBtn.addEventListener("click", async () => {
         ">
           <img
             src="${flag}"
-            alt="${country.names.common}"
+            alt="${country.name}"
             style="
               width:90px;
               border-radius:10px;
@@ -454,7 +444,7 @@ searchBtn.addEventListener("click", async () => {
 
           <div>
             <h2 style="margin:0;">
-              ${country.names.common}
+              ${country.name}
             </h2>
 
             <p style="margin:5px 0;">
@@ -465,49 +455,15 @@ searchBtn.addEventListener("click", async () => {
 
         <hr style="margin:20px 0;">
 
-        <p><strong>🏙 Capital:</strong> ${
-          country.capitals && country.capitals.length > 0 ? country.capitals[0].name : "N/A"
-        }</p>
-
-        <p><strong>🌍 Region:</strong> ${
-          country.region || "N/A"
-        }</p>
-
-        <p><strong>👥 Population:</strong> ${
-          population
-        }</p>
-
-        <p><strong>💱 Currency:</strong>
-        ${currencyName} (${currencyCode})
-        </p>
-
-        <p><strong>🗣 Languages:</strong>
-        ${languages}
-        </p>
-
-        <p><strong>🕐 Timezones:</strong>
-        ${
-          country.timezones
-            ? country.timezones.join(", ")
-            : "N/A"
-        }
-        </p>
-
-        <p><strong>🌐 Domain:</strong>
-        ${
-          country.tlds
-            ? country.tlds.join(", ")
-            : "N/A"
-        }
-        </p>
-
-        <p><strong>📍 Latitude:</strong>
-        ${country.coordinates ? country.coordinates.lat : "N/A"}
-        </p>
-
-        <p><strong>📍 Longitude:</strong>
-        ${country.coordinates ? country.coordinates.lng : "N/A"}
-        </p>
+        <p><strong>🏙 Capital:</strong> ${country.capital || "N/A"}</p>
+        <p><strong>🌍 Region:</strong> ${country.region || "N/A"} ${country.subregion ? `(${country.subregion})` : ""}</p>
+        <p><strong>👥 Population:</strong> ${population}</p>
+        <p><strong>💱 Currency:</strong> ${currencyName} (${currencyCode})</p>
+        <p><strong>🗣 Languages:</strong> ${country.native || "N/A"}</p>
+        <p><strong>🕐 Timezones:</strong> ${timezones}</p>
+        <p><strong>🌐 Domain:</strong> ${country.tld || "N/A"}</p>
+        <p><strong>📍 Latitude:</strong> ${country.latitude || "N/A"}</p>
+        <p><strong>📍 Longitude:</strong> ${country.longitude || "N/A"}</p>
 
       </div>
     `;
@@ -521,7 +477,7 @@ searchBtn.addEventListener("click", async () => {
         padding:15px;
         border-radius:10px;
       ">
-        ❌ Country not found or API error. (Make sure you are using Live Server)
+        ❌ Country not found or connection error. Please try again.
       </div>
     `;
   }
