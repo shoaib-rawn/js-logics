@@ -384,15 +384,7 @@ searchBtn.addEventListener("click", async () => {
 
   try {
     const response = await fetch(
-      `https://api.restcountries.com/countries/v5?q=${encodeURIComponent(
-        countryName
-      )}`,
-      {
-        headers: {
-          Authorization:
-            "Bearer rc_live_78dddb606fa44f879fdfdef4c826cba7",
-        },
-      }
+      `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}`
     );
 
     if (!response.ok) {
@@ -419,19 +411,14 @@ searchBtn.addEventListener("click", async () => {
         : "N/A";
 
     const languages = country.languages
-      ? Object.values(country.languages)
-          .map((lang) => lang.name)
-          .join(", ")
+      ? Object.values(country.languages).join(", ")
       : "N/A";
 
     const population = Number(
       country.population || 0
     ).toLocaleString();
 
-    const flag =
-      country.flag?.large ||
-      country.flag?.medium ||
-      country.flag?.small;
+    const flag = country.flags?.svg || country.flags?.png;
 
     countryBox.innerHTML = `
       <div style="
@@ -450,7 +437,7 @@ searchBtn.addEventListener("click", async () => {
         ">
           <img
             src="${flag}"
-            alt="${country.name}"
+            alt="${country.name.common}"
             style="
               width:90px;
               border-radius:10px;
@@ -460,7 +447,7 @@ searchBtn.addEventListener("click", async () => {
 
           <div>
             <h2 style="margin:0;">
-              ${country.name}
+              ${country.name.common}
             </h2>
 
             <p style="margin:5px 0;">
@@ -472,7 +459,7 @@ searchBtn.addEventListener("click", async () => {
         <hr style="margin:20px 0;">
 
         <p><strong>🏙 Capital:</strong> ${
-          country.capital || "N/A"
+          country.capital ? country.capital.join(", ") : "N/A"
         }</p>
 
         <p><strong>🌍 Region:</strong> ${
@@ -508,11 +495,11 @@ searchBtn.addEventListener("click", async () => {
         </p>
 
         <p><strong>📍 Latitude:</strong>
-        ${country.latitude || "N/A"}
+        ${country.latlng ? country.latlng[0] : "N/A"}
         </p>
 
         <p><strong>📍 Longitude:</strong>
-        ${country.longitude || "N/A"}
+        ${country.latlng ? country.latlng[1] : "N/A"}
         </p>
 
       </div>
