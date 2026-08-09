@@ -352,6 +352,26 @@ function getCurrentTime(timezoneStr) {
   return "Time unknown";
 }
 
+// Function to calculate string similarity for typo tolerance (Fuzzy Search)
+function levenshtein(a, b) {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  const matrix = Array.from({ length: a.length + 1 }, () => []);
+  for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+  for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
+    }
+  }
+  return matrix[a.length][b.length];
+}
+
 searchBtn.addEventListener("click", async () => {
   const countryName = document.getElementById("countryInput").value.trim();
 
@@ -374,7 +394,25 @@ searchBtn.addEventListener("click", async () => {
     const countryNameLower = countryName.toLowerCase();
     
     // Find country in the Verified Database
-    const country = window.liveCountryCache.find(c => c.name.toLowerCase() === countryNameLower);
+    let country = window.liveCountryCache.find(c => c.name.toLowerCase() === countryNameLower);
+    
+    // Auto-Correct Typos (Fuzzy Search Fallback)
+    if (!country) {
+      let bestMatch = null;
+      let bestDist = Infinity;
+      window.liveCountryCache.forEach(c => {
+        const dist = levenshtein(countryNameLower, c.name.toLowerCase());
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestMatch = c;
+        }
+      });
+      // Accept matches with minor typos (distance <= 3)
+      if (bestDist <= 3 && bestMatch) {
+        country = bestMatch;
+      }
+    }
+
     if (!country) throw new Error("Country not found in Live API");
 
     // Smart timezone selector: Try to find timezone matching capital
