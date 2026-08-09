@@ -384,41 +384,48 @@ searchBtn.addEventListener("click", async () => {
 
   try {
     const response = await fetch(
-      `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}`
+      `https://api.restcountries.com/countries/v5?q=${encodeURIComponent(
+        countryName
+      )}`,
+      {
+        headers: {
+          Authorization:
+            "Bearer rc_live_78dddb606fa44f879fdfdef4c826cba7",
+        },
+      }
     );
 
     if (!response.ok) {
       throw new Error("Failed");
     }
 
-    const countries = await response.json();
+    const json = await response.json();
 
-    if (!countries.length) {
+    if (!json.data || !json.data.objects || !json.data.objects.length) {
       throw new Error("Country not found");
     }
 
-    const country = countries[0];
+    const country = json.data.objects[0];
 
     const currencyCode =
-      country.currencies &&
-      Object.keys(country.currencies).length
-        ? Object.keys(country.currencies)[0]
+      country.currencies && country.currencies.length > 0
+        ? country.currencies[0].code
         : "N/A";
 
     const currencyName =
-      currencyCode !== "N/A"
-        ? country.currencies[currencyCode].name
+      country.currencies && country.currencies.length > 0
+        ? country.currencies[0].name
         : "N/A";
 
     const languages = country.languages
-      ? Object.values(country.languages).join(", ")
+      ? country.languages.map(lang => lang.name).join(", ")
       : "N/A";
 
     const population = Number(
       country.population || 0
     ).toLocaleString();
 
-    const flag = country.flags?.svg || country.flags?.png;
+    const flag = country.flag?.url_png || country.flag?.url_svg;
 
     countryBox.innerHTML = `
       <div style="
@@ -437,7 +444,7 @@ searchBtn.addEventListener("click", async () => {
         ">
           <img
             src="${flag}"
-            alt="${country.name.common}"
+            alt="${country.names.common}"
             style="
               width:90px;
               border-radius:10px;
@@ -447,7 +454,7 @@ searchBtn.addEventListener("click", async () => {
 
           <div>
             <h2 style="margin:0;">
-              ${country.name.common}
+              ${country.names.common}
             </h2>
 
             <p style="margin:5px 0;">
@@ -459,7 +466,7 @@ searchBtn.addEventListener("click", async () => {
         <hr style="margin:20px 0;">
 
         <p><strong>🏙 Capital:</strong> ${
-          country.capital ? country.capital.join(", ") : "N/A"
+          country.capitals && country.capitals.length > 0 ? country.capitals[0].name : "N/A"
         }</p>
 
         <p><strong>🌍 Region:</strong> ${
@@ -488,18 +495,18 @@ searchBtn.addEventListener("click", async () => {
 
         <p><strong>🌐 Domain:</strong>
         ${
-          country.tld
-            ? country.tld.join(", ")
+          country.tlds
+            ? country.tlds.join(", ")
             : "N/A"
         }
         </p>
 
         <p><strong>📍 Latitude:</strong>
-        ${country.latlng ? country.latlng[0] : "N/A"}
+        ${country.coordinates ? country.coordinates.lat : "N/A"}
         </p>
 
         <p><strong>📍 Longitude:</strong>
-        ${country.latlng ? country.latlng[1] : "N/A"}
+        ${country.coordinates ? country.coordinates.lng : "N/A"}
         </p>
 
       </div>
