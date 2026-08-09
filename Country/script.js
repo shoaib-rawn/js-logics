@@ -250,43 +250,62 @@ setInterval(async () => {
   }
 }, 300000);
 // ==========================================
-// 🌍 COUNTRY DATA (NO CORS - FULLY WORKING)
+// 🌍 OPTIMIZED COUNTRY DATA (FAST & RELIABLE)
 // ==========================================
 
-const countryCache = new Map();
-
-// Comprehensive country-capital database (built from real API data)
-// This ensures NO CORS issues and instant results
+// Expanded database with more countries (FAST - no API calls)
 const countryDatabase = {
-  "pakistan": { capital: "Islamabad", region: "Asia", subregion: "Southern Asia", currency: "Pakistani Rupee", currencyCode: "PKR", language: "Urdu", flag: "pk", lat: 33.6844, lon: 73.0479, population: 242923845 },
-  "india": { capital: "New Delhi", region: "Asia", subregion: "Southern Asia", currency: "Indian Rupee", currencyCode: "INR", language: "Hindi, English", flag: "in", lat: 28.6139, lon: 77.209, population: 1380004385 },
-  "australia": { capital: "Canberra", region: "Oceania", subregion: "Australia and New Zealand", currency: "Australian Dollar", currencyCode: "AUD", language: "English", flag: "au", lat: -35.2809, lon: 149.13, population: 25788000 },
-  "canada": { capital: "Ottawa", region: "Americas", subregion: "North America", currency: "Canadian Dollar", currencyCode: "CAD", language: "English, French", flag: "ca", lat: 45.4215, lon: -75.6972, population: 38250000 },
-  "united states": { capital: "Washington, D.C.", region: "Americas", subregion: "North America", currency: "US Dollar", currencyCode: "USD", language: "English", flag: "us", lat: 38.9072, lon: -77.0369, population: 331893745 },
-  "usa": { capital: "Washington, D.C.", region: "Americas", subregion: "North America", currency: "US Dollar", currencyCode: "USD", language: "English", flag: "us", lat: 38.9072, lon: -77.0369, population: 331893745 },
-  "united kingdom": { capital: "London", region: "Europe", subregion: "Northern Europe", currency: "British Pound", currencyCode: "GBP", language: "English", flag: "gb", lat: 51.5074, lon: -0.1278, population: 67215293 },
-  "uk": { capital: "London", region: "Europe", subregion: "Northern Europe", currency: "British Pound", currencyCode: "GBP", language: "English", flag: "gb", lat: 51.5074, lon: -0.1278, population: 67215293 },
-  "germany": { capital: "Berlin", region: "Europe", subregion: "Western Europe", currency: "Euro", currencyCode: "EUR", language: "German", flag: "de", lat: 52.52, lon: 13.405, population: 83200000 },
-  "france": { capital: "Paris", region: "Europe", subregion: "Western Europe", currency: "Euro", currencyCode: "EUR", language: "French", flag: "fr", lat: 48.8566, lon: 2.3522, population: 67390000 },
-  "japan": { capital: "Tokyo", region: "Asia", subregion: "Eastern Asia", currency: "Japanese Yen", currencyCode: "JPY", language: "Japanese", flag: "jp", lat: 35.6895, lon: 139.6917, population: 125800000 },
-  "china": { capital: "Beijing", region: "Asia", subregion: "Eastern Asia", currency: "Chinese Yuan", currencyCode: "CNY", language: "Chinese", flag: "cn", lat: 39.9042, lon: 116.4074, population: 1444216107 },
-  "brazil": { capital: "Brasília", region: "Americas", subregion: "South America", currency: "Brazilian Real", currencyCode: "BRL", language: "Portuguese", flag: "br", lat: -15.8267, lon: -47.9218, population: 213993437 },
-  "russia": { capital: "Moscow", region: "Europe/Asia", subregion: "Eastern Europe", currency: "Russian Ruble", currencyCode: "RUB", language: "Russian", flag: "ru", lat: 55.7558, lon: 37.6173, population: 145934462 },
-  "south korea": { capital: "Seoul", region: "Asia", subregion: "Eastern Asia", currency: "South Korean Won", currencyCode: "KRW", language: "Korean", flag: "kr", lat: 37.5665, lon: 126.978, population: 51780579 },
-  "italy": { capital: "Rome", region: "Europe", subregion: "Southern Europe", currency: "Euro", currencyCode: "EUR", language: "Italian", flag: "it", lat: 41.9028, lon: 12.4964, population: 60244639 },
-  "spain": { capital: "Madrid", region: "Europe", subregion: "Southern Europe", currency: "Euro", currencyCode: "EUR", language: "Spanish", flag: "es", lat: 40.4168, lon: -3.7038, population: 47351567 },
-  "mexico": { capital: "Mexico City", region: "Americas", subregion: "North America", currency: "Mexican Peso", currencyCode: "MXN", language: "Spanish", flag: "mx", lat: 19.4326, lon: -99.1332, population: 128932753 },
-  "indonesia": { capital: "Jakarta", region: "Asia", subregion: "Southeastern Asia", currency: "Indonesian Rupiah", currencyCode: "IDR", language: "Indonesian", flag: "id", lat: -6.2088, lon: 106.8456, population: 273523615 },
-  "turkey": { capital: "Ankara", region: "Asia", subregion: "Western Asia", currency: "Turkish Lira", currencyCode: "TRY", language: "Turkish", flag: "tr", lat: 39.9334, lon: 32.8597, population: 84339067 },
-  "egypt": { capital: "Cairo", region: "Africa", subregion: "North Africa", currency: "Egyptian Pound", currencyCode: "EGP", language: "Arabic", flag: "eg", lat: 30.0444, lon: 31.2357, population: 102334404 },
-  "nigeria": { capital: "Abuja", region: "Africa", subregion: "West Africa", currency: "Nigerian Naira", currencyCode: "NGN", language: "English", flag: "ng", lat: 9.0765, lon: 7.3986, population: 206139587 },
-  "bangladesh": { capital: "Dhaka", region: "Asia", subregion: "Southern Asia", currency: "Bangladeshi Taka", currencyCode: "BDT", language: "Bengali", flag: "bd", lat: 23.8103, lon: 90.4125, population: 164689383 },
-  "malaysia": { capital: "Kuala Lumpur", region: "Asia", subregion: "Southeastern Asia", currency: "Malaysian Ringgit", currencyCode: "MYR", language: "Malay", flag: "my", lat: 3.139, lon: 101.6869, population: 32365999 },
-  "singapore": { capital: "Singapore", region: "Asia", subregion: "Southeastern Asia", currency: "Singapore Dollar", currencyCode: "SGD", language: "English, Malay, Chinese", flag: "sg", lat: 1.3521, lon: 103.8198, population: 5850342 },
-  "new zealand": { capital: "Wellington", region: "Oceania", subregion: "Australia and New Zealand", currency: "New Zealand Dollar", currencyCode: "NZD", language: "English, Maori", flag: "nz", lat: -41.2866, lon: 174.7756, population: 4822233 }
+  // Asia
+  "pakistan": { capital: "Islamabad", region: "Asia", subregion: "Southern Asia", currency: "Pakistani Rupee", currencyCode: "PKR", language: "Urdu", flag: "pk", lat: 33.6844, lon: 73.0479, population: 242923845, timezone: "Asia/Karachi" },
+  "india": { capital: "New Delhi", region: "Asia", subregion: "Southern Asia", currency: "Indian Rupee", currencyCode: "INR", language: "Hindi, English", flag: "in", lat: 28.6139, lon: 77.209, population: 1380004385, timezone: "Asia/Kolkata" },
+  "china": { capital: "Beijing", region: "Asia", subregion: "Eastern Asia", currency: "Chinese Yuan", currencyCode: "CNY", language: "Chinese", flag: "cn", lat: 39.9042, lon: 116.4074, population: 1444216107, timezone: "Asia/Shanghai" },
+  "japan": { capital: "Tokyo", region: "Asia", subregion: "Eastern Asia", currency: "Japanese Yen", currencyCode: "JPY", language: "Japanese", flag: "jp", lat: 35.6895, lon: 139.6917, population: 125800000, timezone: "Asia/Tokyo" },
+  "indonesia": { capital: "Jakarta", region: "Asia", subregion: "Southeastern Asia", currency: "Indonesian Rupiah", currencyCode: "IDR", language: "Indonesian", flag: "id", lat: -6.2088, lon: 106.8456, population: 273523615, timezone: "Asia/Jakarta" },
+  "bangladesh": { capital: "Dhaka", region: "Asia", subregion: "Southern Asia", currency: "Bangladeshi Taka", currencyCode: "BDT", language: "Bengali", flag: "bd", lat: 23.8103, lon: 90.4125, population: 164689383, timezone: "Asia/Dhaka" },
+  "malaysia": { capital: "Kuala Lumpur", region: "Asia", subregion: "Southeastern Asia", currency: "Malaysian Ringgit", currencyCode: "MYR", language: "Malay", flag: "my", lat: 3.139, lon: 101.6869, population: 32365999, timezone: "Asia/Kuala_Lumpur" },
+  "singapore": { capital: "Singapore", region: "Asia", subregion: "Southeastern Asia", currency: "Singapore Dollar", currencyCode: "SGD", language: "English, Malay, Chinese", flag: "sg", lat: 1.3521, lon: 103.8198, population: 5850342, timezone: "Asia/Singapore" },
+  "south korea": { capital: "Seoul", region: "Asia", subregion: "Eastern Asia", currency: "South Korean Won", currencyCode: "KRW", language: "Korean", flag: "kr", lat: 37.5665, lon: 126.978, population: 51780579, timezone: "Asia/Seoul" },
+  "turkey": { capital: "Ankara", region: "Asia", subregion: "Western Asia", currency: "Turkish Lira", currencyCode: "TRY", language: "Turkish", flag: "tr", lat: 39.9334, lon: 32.8597, population: 84339067, timezone: "Europe/Istanbul" },
+  
+  // North America
+  "united states": { capital: "Washington, D.C.", region: "Americas", subregion: "North America", currency: "US Dollar", currencyCode: "USD", language: "English", flag: "us", lat: 38.9072, lon: -77.0369, population: 331893745, timezone: "America/New_York" },
+  "usa": { capital: "Washington, D.C.", region: "Americas", subregion: "North America", currency: "US Dollar", currencyCode: "USD", language: "English", flag: "us", lat: 38.9072, lon: -77.0369, population: 331893745, timezone: "America/New_York" },
+  "canada": { capital: "Ottawa", region: "Americas", subregion: "North America", currency: "Canadian Dollar", currencyCode: "CAD", language: "English, French", flag: "ca", lat: 45.4215, lon: -75.6972, population: 38250000, timezone: "America/Toronto" },
+  "mexico": { capital: "Mexico City", region: "Americas", subregion: "North America", currency: "Mexican Peso", currencyCode: "MXN", language: "Spanish", flag: "mx", lat: 19.4326, lon: -99.1332, population: 128932753, timezone: "America/Mexico_City" },
+  
+  // South America
+  "brazil": { capital: "Brasília", region: "Americas", subregion: "South America", currency: "Brazilian Real", currencyCode: "BRL", language: "Portuguese", flag: "br", lat: -15.8267, lon: -47.9218, population: 213993437, timezone: "America/Sao_Paulo" },
+  
+  // Europe
+  "united kingdom": { capital: "London", region: "Europe", subregion: "Northern Europe", currency: "British Pound", currencyCode: "GBP", language: "English", flag: "gb", lat: 51.5074, lon: -0.1278, population: 67215293, timezone: "Europe/London" },
+  "uk": { capital: "London", region: "Europe", subregion: "Northern Europe", currency: "British Pound", currencyCode: "GBP", language: "English", flag: "gb", lat: 51.5074, lon: -0.1278, population: 67215293, timezone: "Europe/London" },
+  "germany": { capital: "Berlin", region: "Europe", subregion: "Western Europe", currency: "Euro", currencyCode: "EUR", language: "German", flag: "de", lat: 52.52, lon: 13.405, population: 83200000, timezone: "Europe/Berlin" },
+  "france": { capital: "Paris", region: "Europe", subregion: "Western Europe", currency: "Euro", currencyCode: "EUR", language: "French", flag: "fr", lat: 48.8566, lon: 2.3522, population: 67390000, timezone: "Europe/Paris" },
+  "italy": { capital: "Rome", region: "Europe", subregion: "Southern Europe", currency: "Euro", currencyCode: "EUR", language: "Italian", flag: "it", lat: 41.9028, lon: 12.4964, population: 60244639, timezone: "Europe/Rome" },
+  "spain": { capital: "Madrid", region: "Europe", subregion: "Southern Europe", currency: "Euro", currencyCode: "EUR", language: "Spanish", flag: "es", lat: 40.4168, lon: -3.7038, population: 47351567, timezone: "Europe/Madrid" },
+  "belgium": { capital: "Brussels", region: "Europe", subregion: "Western Europe", currency: "Euro", currencyCode: "EUR", language: "Dutch, French, German", flag: "be", lat: 50.8503, lon: 4.3517, population: 11589623, timezone: "Europe/Brussels" },
+  "netherlands": { capital: "Amsterdam", region: "Europe", subregion: "Western Europe", currency: "Euro", currencyCode: "EUR", language: "Dutch", flag: "nl", lat: 52.3676, lon: 4.9041, population: 17134872, timezone: "Europe/Amsterdam" },
+  "switzerland": { capital: "Bern", region: "Europe", subregion: "Western Europe", currency: "Swiss Franc", currencyCode: "CHF", language: "German, French, Italian", flag: "ch", lat: 46.948, lon: 7.4474, population: 8654622, timezone: "Europe/Zurich" },
+  "sweden": { capital: "Stockholm", region: "Europe", subregion: "Northern Europe", currency: "Swedish Krona", currencyCode: "SEK", language: "Swedish", flag: "se", lat: 59.3293, lon: 18.0686, population: 10353442, timezone: "Europe/Stockholm" },
+  "norway": { capital: "Oslo", region: "Europe", subregion: "Northern Europe", currency: "Norwegian Krone", currencyCode: "NOK", language: "Norwegian", flag: "no", lat: 59.9139, lon: 10.7522, population: 5421241, timezone: "Europe/Oslo" },
+  "denmark": { capital: "Copenhagen", region: "Europe", subregion: "Northern Europe", currency: "Danish Krone", currencyCode: "DKK", language: "Danish", flag: "dk", lat: 55.6761, lon: 12.5683, population: 5831404, timezone: "Europe/Copenhagen" },
+  "finland": { capital: "Helsinki", region: "Europe", subregion: "Northern Europe", currency: "Euro", currencyCode: "EUR", language: "Finnish, Swedish", flag: "fi", lat: 60.1699, lon: 24.9384, population: 5530719, timezone: "Europe/Helsinki" },
+  "ireland": { capital: "Dublin", region: "Europe", subregion: "Northern Europe", currency: "Euro", currencyCode: "EUR", language: "English, Irish", flag: "ie", lat: 53.3498, lon: -6.2603, population: 4994724, timezone: "Europe/Dublin" },
+  "austria": { capital: "Vienna", region: "Europe", subregion: "Western Europe", currency: "Euro", currencyCode: "EUR", language: "German", flag: "at", lat: 48.2082, lon: 16.3738, population: 9006398, timezone: "Europe/Vienna" },
+  "poland": { capital: "Warsaw", region: "Europe", subregion: "Eastern Europe", currency: "Polish Złoty", currencyCode: "PLN", language: "Polish", flag: "pl", lat: 52.2297, lon: 21.0122, population: 37950802, timezone: "Europe/Warsaw" },
+  "portugal": { capital: "Lisbon", region: "Europe", subregion: "Southern Europe", currency: "Euro", currencyCode: "EUR", language: "Portuguese", flag: "pt", lat: 38.7223, lon: -9.1393, population: 10196709, timezone: "Europe/Lisbon" },
+  "russia": { capital: "Moscow", region: "Europe/Asia", subregion: "Eastern Europe", currency: "Russian Ruble", currencyCode: "RUB", language: "Russian", flag: "ru", lat: 55.7558, lon: 37.6173, population: 145934462, timezone: "Europe/Moscow" },
+  
+  // Oceania
+  "australia": { capital: "Canberra", region: "Oceania", subregion: "Australia and New Zealand", currency: "Australian Dollar", currencyCode: "AUD", language: "English", flag: "au", lat: -35.2809, lon: 149.13, population: 25788000, timezone: "Australia/Sydney" },
+  "new zealand": { capital: "Wellington", region: "Oceania", subregion: "Australia and New Zealand", currency: "New Zealand Dollar", currencyCode: "NZD", language: "English, Maori", flag: "nz", lat: -41.2866, lon: 174.7756, population: 4822233, timezone: "Pacific/Auckland" },
+  
+  // Africa
+  "egypt": { capital: "Cairo", region: "Africa", subregion: "North Africa", currency: "Egyptian Pound", currencyCode: "EGP", language: "Arabic", flag: "eg", lat: 30.0444, lon: 31.2357, population: 102334404, timezone: "Africa/Cairo" },
+  "nigeria": { capital: "Abuja", region: "Africa", subregion: "West Africa", currency: "Nigerian Naira", currencyCode: "NGN", language: "English", flag: "ng", lat: 9.0765, lon: 7.3986, population: 206139587, timezone: "Africa/Lagos" }
 };
 
-// Helper to get weather
+// Helper to get weather (FAST - single API call)
 async function getWeather(lat, lon) {
   try {
     const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,relative_humidity_2m`);
@@ -299,77 +318,62 @@ async function getWeather(lat, lon) {
   } catch (err) {
     console.log("Weather fetch failed");
   }
-  return null;
+  return "Weather unavailable";
 }
 
-// FIXED: Get accurate local time using TimeZoneDB API (free, no key required for basic use)
-async function getLocalTimeWithTheme(lat, lon, countryName) {
-  if (!lat || !lon) return { timeText: "Calculating...", isDay: true, period: "Day", greeting: "Good Day! ☀️", hours: 12 };
+// Get local time using World Time API (FAST and shows timezone)
+async function getLocalTimeWithTimezone(timezone) {
+  if (!timezone) return { timeText: "Time unavailable", timezoneName: "Unknown", isDay: true, greeting: "Good Day! ☀️" };
   
   try {
-    // Using geonames.org free timezone API (no key required for demo usage)
-    const response = await fetch(`https://secure.geonames.org/timezoneJSON?lat=${lat}&lng=${lon}&username=demo`);
+    const response = await fetch(`https://worldtimeapi.org/api/timezone/${timezone}`);
     if (response.ok) {
       const data = await response.json();
-      if (data && data.time) {
-        const countryTime = new Date(data.time);
-        const hours = countryTime.getHours();
-        
-        // Determine if it's day or night (6 AM to 6 PM = Day)
-        const isDay = hours >= 6 && hours < 18;
-        const period = isDay ? "Day 🌞" : "Night 🌙";
-        const greeting = isDay ? "Good Day! ☀️" : "Good Night! 🌙✨";
-        
-        const timeText = countryTime.toLocaleString("en-US", { 
-          dateStyle: "full", 
-          timeStyle: "medium"
-        });
-        
-        return { timeText, isDay, period, greeting, hours };
-      }
-    }
-    throw new Error("GeoNames failed");
-  } catch (err) {
-    // Fallback: Calculate using longitude (more accurate than before)
-    try {
-      const offsetHours = Math.round(lon / 15);
-      const now = new Date();
-      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-      const countryTime = new Date(utc + (offsetHours * 3600000));
+      const countryTime = new Date(data.datetime);
       const hours = countryTime.getHours();
-      
       const isDay = hours >= 6 && hours < 18;
-      const period = isDay ? "Day 🌞" : "Night 🌙";
-      const greeting = isDay ? "Good Day! ☀️" : "Good Night! 🌙✨";
+      const greeting = isDay ? "Good Day! ☀️" : "Good Night! 🌙";
+      
       const timeText = countryTime.toLocaleString("en-US", { 
         dateStyle: "full", 
-        timeStyle: "medium" 
+        timeStyle: "medium"
       });
       
-      return { timeText, isDay, period, greeting, hours };
-    } catch (fallbackErr) {
-      console.log("All timezone methods failed");
-      const now = new Date();
-      const hours = now.getHours();
-      const isDay = hours >= 6 && hours < 18;
-      const period = isDay ? "Day 🌞" : "Night 🌙";
-      const greeting = isDay ? "Good Day! ☀️" : "Good Night! 🌙✨";
-      
       return { 
-        timeText: now.toLocaleString("en-US", { dateStyle: "full", timeStyle: "medium" }), 
+        timeText, 
+        timezoneName: timezone,
         isDay, 
-        period, 
         greeting,
-        hours 
+        period: isDay ? "Day 🌞" : "Night 🌙"
       };
     }
+    return fallbackTime();
+  } catch (err) {
+    console.log("Timezone error:", err);
+    return fallbackTime();
   }
 }
 
+function fallbackTime() {
+  const now = new Date();
+  const hours = now.getHours();
+  const isDay = hours >= 6 && hours < 18;
+  return { 
+    timeText: now.toLocaleString("en-US", { dateStyle: "full", timeStyle: "medium" }), 
+    timezoneName: "Local",
+    isDay, 
+    greeting: isDay ? "Good Day! ☀️" : "Good Night! 🌙",
+    period: isDay ? "Day 🌞" : "Night 🌙"
+  };
+}
+
+// ==========================================
+// 🌍 COUNTRY SEARCH (RESTCOUNTRIES API)
+// ==========================================
+
 searchBtn.addEventListener("click", async () => {
-  const startTime = Date.now();
-  let countryName = document.getElementById("countryInput").value.trim();
-  
+  const countryName = document.getElementById("countryInput").value.trim();
+
   if (!countryName) {
     countryBox.innerHTML = "Please enter a country name!";
     return;
@@ -378,170 +382,168 @@ searchBtn.addEventListener("click", async () => {
   setSearchLoading(true);
   countryBox.innerHTML = "⏳ Fetching country data...";
 
-  // Country name normalization
-  const nameMappings = {
-    "usa": "united states", "us": "united states", "america": "united states",
-    "uk": "uk", "britain": "uk", "england": "uk",
-    "uae": "uae", "pak": "pakistan", "bd": "bangladesh",
-    "korea": "south korea", "russia": "russia", "oz": "australia", "aussie": "australia"
-  };
-  
-  let searchKey = nameMappings[countryName.toLowerCase()] || countryName.toLowerCase();
-  
-  // Get data from our database (instant, no CORS)
-  let countryInfo = countryDatabase[searchKey];
-  
-  if (!countryInfo) {
-    // Try partial match
-    const matchKey = Object.keys(countryDatabase).find(key => 
-      searchKey.includes(key) || key.includes(searchKey)
-    );
-    if (matchKey) {
-      countryInfo = countryDatabase[matchKey];
-      searchKey = matchKey;
-    }
-  }
-  
-  if (countryInfo) {
-    // Get live COVID data from Disease.sh API (this API supports CORS)
-    let covidData = null;
-    try {
-      const response = await fetch(`https://disease.sh/v3/covid-19/countries/${encodeURIComponent(searchKey)}`);
-      if (response.ok) {
-        covidData = await response.json();
+  try {
+    const response = await fetch(
+      `https://api.restcountries.com/countries/v5?q=${encodeURIComponent(
+        countryName
+      )}`,
+      {
+        headers: {
+          Authorization:
+            "Bearer rc_live_78dddb606fa44f879fdfdef4c826cba7",
+        },
       }
-    } catch (err) {
-      console.log("COVID data fetch failed:", err);
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed");
     }
-    
-    // Get live weather
-    let weatherText = "Loading weather...";
-    if (countryInfo.lat && countryInfo.lon) {
-      const weather = await getWeather(countryInfo.lat, countryInfo.lon);
-      if (weather) weatherText = weather;
+
+    const countries = await response.json();
+
+    if (!countries.length) {
+      throw new Error("Country not found");
     }
-    
-    // Get local time with day/night detection
-    const timeData = await getLocalTimeWithTheme(countryInfo.lat, countryInfo.lon, searchKey);
-    const timeText = timeData.timeText;
-    const isDay = timeData.isDay;
-    const period = timeData.period;
-    const greeting = timeData.greeting;
-    
-    // Dynamic theme based on day/night
-    const themeStyles = isDay ? {
-      mainBg: "linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)",
-      cardBg: "#fff9f0",
-      accent: "#ff9800",
-      textColor: "#1a3a4a",
-      badgeBg: "#28a74520",
-      badgeText: "#155724",
-      badgeBorder: "#28a745"
-    } : {
-      mainBg: "linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)",
-      cardBg: "#1a1a3e",
-      accent: "#e94560",
-      textColor: "#e0e0e0",
-      badgeBg: "#e9456030",
-      badgeText: "#ff6b8a",
-      badgeBorder: "#e94560"
-    };
-    
-    const displayName = searchKey.split(' ').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-    
-    const flagUrl = `https://flagcdn.com/w320/${countryInfo.flag}.png`;
-    const popText = countryInfo.population.toLocaleString();
-    
+
+    const country = countries[0];
+
+    const currencyCode =
+      country.currencies &&
+      Object.keys(country.currencies).length
+        ? Object.keys(country.currencies)[0]
+        : "N/A";
+
+    const currencyName =
+      currencyCode !== "N/A"
+        ? country.currencies[currencyCode].name
+        : "N/A";
+
+    const languages = country.languages
+      ? Object.values(country.languages)
+          .map((lang) => lang.name)
+          .join(", ")
+      : "N/A";
+
+    const population = Number(
+      country.population || 0
+    ).toLocaleString();
+
+    const flag =
+      country.flag?.large ||
+      country.flag?.medium ||
+      country.flag?.small;
+
     countryBox.innerHTML = `
-      <div style="margin-top: 30px;">
-        <div style="background: ${themeStyles.mainBg}; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); animation: fadeIn 0.3s ease; transition: all 0.3s ease;">
-          
-          <!-- Header with greeting message -->
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 0.8rem;">
-              <span style="font-size: 2rem;">${isDay ? "☀️" : "🌙"}</span>
-              <span style="font-weight: bold; color: ${themeStyles.accent}; background: ${isDay ? "#fff3e0" : "#2a2a5e"}; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem;">
-                ${greeting}
-              </span>
-            </div>
-            <div style="font-size: 0.8rem; color: ${themeStyles.textColor}; opacity: 0.7;">
-              ${period} • Local Time: ${timeText.split(',')[0]}
-            </div>
+      <div style="
+        margin-top:20px;
+        background:#ffffff;
+        border-radius:20px;
+        padding:20px;
+        box-shadow:0 4px 12px rgba(0,0,0,.1);
+      ">
+
+        <div style="
+          display:flex;
+          align-items:center;
+          gap:15px;
+          flex-wrap:wrap;
+        ">
+          <img
+            src="${flag}"
+            alt="${country.name}"
+            style="
+              width:90px;
+              border-radius:10px;
+              border:1px solid #ddd;
+            "
+          >
+
+          <div>
+            <h2 style="margin:0;">
+              ${country.name}
+            </h2>
+
+            <p style="margin:5px 0;">
+              ${country.region || "N/A"}
+            </p>
           </div>
-          
-          <!-- Main Country Info -->
-          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-            <img src="${flagUrl}" alt="Flag" style="width: 70px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"/>
-            <div>
-              <h3 style="margin: 0; font-size: 2rem; color: ${themeStyles.textColor};">${displayName}</h3>
-              <p style="margin: 5px 0 0; font-size: 0.75rem;">
-                <span style="display: inline-block; background: ${themeStyles.badgeBg}; color: ${themeStyles.badgeText}; padding: 4px 12px; border-radius: 20px; border: 1px solid ${themeStyles.badgeBorder}; font-weight: 500;">
-                  ✅ Data from verified sources
-                </span>
-              </p>
-            </div>
-          </div>
-          
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
-            
-            <!-- Country Info Card -->
-            <div style="background: ${themeStyles.cardBg}; border-radius: 1rem; padding: 1rem; color: ${themeStyles.textColor}; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-              <h4 style="margin: 0 0 10px 0; color: ${themeStyles.accent};">📋 Country Information</h4>
-              <p><strong>🏙️ Capital:</strong> <span style="color: ${themeStyles.accent}; font-weight: bold;">${countryInfo.capital}</span></p>
-              <p><strong>🌍 Region:</strong> ${countryInfo.region} ${countryInfo.subregion ? `(${countryInfo.subregion})` : ''}</p>
-              <p><strong>👥 Population:</strong> ${popText}</p>
-              <p><strong>💱 Currency:</strong> ${countryInfo.currency} (${countryInfo.currencyCode})</p>
-              <p><strong>🗣️ Languages:</strong> ${countryInfo.language}</p>
-            </div>
-            
-            <!-- COVID Stats Card -->
-            <div style="background: ${themeStyles.cardBg}; border-radius: 1rem; padding: 1rem; color: ${themeStyles.textColor}; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-              <h4 style="margin: 0 0 10px 0; color: ${themeStyles.accent};">🦠 COVID-19 Statistics</h4>
-              ${covidData ? `
-                <p><strong>🦠 Total Cases:</strong> ${covidData.cases?.toLocaleString() || 'N/A'}</p>
-                <p><strong>📈 Today Cases:</strong> ${covidData.todayCases?.toLocaleString() || 'N/A'}</p>
-                <p><strong>💀 Deaths:</strong> ${covidData.deaths?.toLocaleString() || 'N/A'}</p>
-                <p><strong>❤️ Recovered:</strong> ${covidData.recovered?.toLocaleString() || 'N/A'}</p>
-                <p><strong>⚠️ Active Cases:</strong> ${covidData.active?.toLocaleString() || 'N/A'}</p>
-              ` : '<p>COVID data temporarily unavailable</p>'}
-            </div>
-            
-            <!-- Weather & Time Card -->
-            <div style="background: ${themeStyles.cardBg}; border-radius: 1rem; padding: 1rem; color: ${themeStyles.textColor}; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-              <h4 style="margin: 0 0 10px 0; color: ${themeStyles.accent};">🌤️ Live Weather & Time</h4>
-              <p><strong>🌡️ Current Weather:</strong> ${weatherText}</p>
-              <p><strong>🕐 Local Time:</strong> ${timeText}</p>
-              <p><strong>${isDay ? "☀️ Daytime" : "🌙 Nighttime"}:</strong> ${isDay ? "Enjoy the daylight! 🌞" : "Stars are shining! ✨"}</p>
-              ${countryInfo.lat && countryInfo.lon ? `<p><small>📍 Coordinates: ${countryInfo.lat.toFixed(2)}°, ${countryInfo.lon.toFixed(2)}°</small></p>` : ''}
-            </div>
-          </div>
-          
-          <p style="margin-top: 1rem; padding: 0.5rem; background: ${isDay ? "#e7f3ff" : "#0a0a2a"}; border-radius: 0.5rem; font-size: 0.7rem; text-align: center; color: ${themeStyles.textColor}; opacity: 0.8;">
-            🌐 Data Sources: Country Database + Disease.sh API (Live COVID) + Open-Meteo Weather API
-          </p>
         </div>
+
+        <hr style="margin:20px 0;">
+
+        <p><strong>🏙 Capital:</strong> ${
+          country.capital || "N/A"
+        }</p>
+
+        <p><strong>🌍 Region:</strong> ${
+          country.region || "N/A"
+        }</p>
+
+        <p><strong>👥 Population:</strong> ${
+          population
+        }</p>
+
+        <p><strong>💱 Currency:</strong>
+        ${currencyName} (${currencyCode})
+        </p>
+
+        <p><strong>🗣 Languages:</strong>
+        ${languages}
+        </p>
+
+        <p><strong>🕐 Timezones:</strong>
+        ${
+          country.timezones
+            ? country.timezones.join(", ")
+            : "N/A"
+        }
+        </p>
+
+        <p><strong>🌐 Domain:</strong>
+        ${
+          country.tld
+            ? country.tld.join(", ")
+            : "N/A"
+        }
+        </p>
+
+        <p><strong>📍 Latitude:</strong>
+        ${country.latitude || "N/A"}
+        </p>
+
+        <p><strong>📍 Longitude:</strong>
+        ${country.longitude || "N/A"}
+        </p>
+
       </div>
     `;
-    
-    setSearchLoading(false);
-    countryBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    return;
-  }
-  
-  // Country not in database
-  countryBox.innerHTML = `
-    <div style="margin-top: 30px;">
-      <div style="background: #fff3cd; border-radius: 1rem; padding: 1rem;">
-        <strong>⚠️ Country data not found: "${countryName}"</strong><br>
-        <small>Supported countries: ${Object.keys(countryDatabase).slice(0, 10).join(", ")} and more...</small>
+  } catch (error) {
+    console.error(error);
+
+    countryBox.innerHTML = `
+      <div style="
+        margin-top:20px;
+        background:#fff3cd;
+        padding:15px;
+        border-radius:10px;
+      ">
+        ❌ Country not found or API error.
       </div>
-    </div>
-  `;
+    `;
+  }
+
   setSearchLoading(false);
 });
-// Dismiss layer configuration
-closeDedication.addEventListener("click", () => {
-  dedicationCard.style.display = "none";
+/* New functionality: Show all hardcoded countries */
+const allCountriesBtn = document.createElement('button');
+allCountriesBtn.id = 'allCountriesBtn';
+allCountriesBtn.textContent = 'All Countries';
+allCountriesBtn.style = 'margin:10px;padding:8px 12px;background:#4a90e2;color:white;border:none;border-radius:5px;cursor:pointer;';
+document.body.appendChild(allCountriesBtn);
+
+allCountriesBtn.addEventListener('click', () => {
+  const all = Object.entries(countryDatabase)
+    .map(([name, data]) => `<li>${name} - ${data.capital} (${data.currencyCode})</li>`)
+    .join('');
+  countryBox.innerHTML = `<ul style="max-height:400px;overflow:auto;">${all}</ul>`;
 });
