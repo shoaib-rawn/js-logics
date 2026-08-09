@@ -470,58 +470,29 @@ searchBtn.addEventListener("click", async () => {
   countryBox.innerHTML = "⏳ Fetching country data...";
 
   try {
-    // Try the LIVE API first (whole world data)
-    const response = await fetch(
-      `https://api.restcountries.com/countries/v5?q=${encodeURIComponent(
-        countryName
-      )}`,
-      {
-        headers: {
-          Authorization:
-            "Bearer rc_live_78dddb606fa44f879fdfdef4c826cba7",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("API Request Failed");
+    // 100% FREE KEYLESS API (Fetched once and cached for speed)
+    if (!window.liveCountryCache) {
+      const response = await fetch("https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/json/countries.json");
+      if (!response.ok) throw new Error("API Request Failed");
+      window.liveCountryCache = await response.json();
     }
 
-    const json = await response.json();
+    const country = window.liveCountryCache.find(c => c.name.toLowerCase() === countryName.toLowerCase());
 
-    if (!json.data || !json.data.objects || !json.data.objects.length) {
+    if (!country) {
       throw new Error("Country not found in Live API");
     }
 
-    const country = json.data.objects[0];
-
-    const currencyCode =
-      country.currencies && country.currencies.length > 0
-        ? country.currencies[0].code
-        : "N/A";
-
-    const currencyName =
-      country.currencies && country.currencies.length > 0
-        ? country.currencies[0].name
-        : "N/A";
-
-    const languages = country.languages
-      ? country.languages.map(lang => lang.name).join(", ")
-      : "N/A";
-
-    const population = Number(
-      country.population || 0
-    ).toLocaleString();
-
-    const flag = country.flag?.url_png || country.flag?.url_svg;
-
-    const timezones = country.timezones
-      ? country.timezones.join(", ")
-      : "N/A";
-
-    const localTime = country.timezones && country.timezones.length > 0 
-      ? getCurrentTime(country.timezones[0])
-      : "Time unknown";
+    const currencyCode = country.currency || "N/A";
+    const currencyName = country.currency_name || "N/A";
+    const languages = country.native || "N/A";
+    const population = Number(country.population || 0).toLocaleString();
+    const flag = `https://flagsapi.com/${country.iso2.toUpperCase()}/flat/64.png`;
+    
+    // Some countries have multiple timezones, we get the first one for the local time calculation
+    const tzList = country.timezones ? country.timezones.map(t => t.zoneName).join(", ") : "N/A";
+    const firstTz = country.timezones && country.timezones.length > 0 ? country.timezones[0].zoneName : null;
+    const localTime = firstTz ? getCurrentTime(firstTz) : "Time unknown";
 
     countryBox.innerHTML = `
       <div style="
@@ -540,7 +511,7 @@ searchBtn.addEventListener("click", async () => {
         ">
           <img
             src="${flag}"
-            alt="${country.names.common}"
+            alt="${country.name}"
             style="
               width:90px;
               border-radius:10px;
@@ -550,7 +521,7 @@ searchBtn.addEventListener("click", async () => {
 
           <div>
             <h2 style="margin:0;">
-              ${country.names.common}
+              ${country.name}
             </h2>
 
             <p style="margin:5px 0;">
@@ -561,49 +532,25 @@ searchBtn.addEventListener("click", async () => {
 
         <hr style="margin:20px 0;">
 
-        <p><strong>🏙 Capital:</strong> ${
-          country.capitals && country.capitals.length > 0 ? country.capitals[0].name : "N/A"
-        }</p>
+        <p><strong>🏙 Capital:</strong> ${country.capital || "N/A"}</p>
 
-        <p><strong>🌍 Region:</strong> ${
-          country.region || "N/A"
-        }</p>
+        <p><strong>🌍 Region:</strong> ${country.region || "N/A"} (${country.subregion || "N/A"})</p>
 
-        <p><strong>👥 Population:</strong> ${
-          population
-        }</p>
+        <p><strong>👥 Population:</strong> ${population}</p>
 
-        <p><strong>💱 Currency:</strong>
-        ${currencyName} (${currencyCode})
-        </p>
+        <p><strong>💱 Currency:</strong> ${currencyName} (${currencyCode})</p>
 
-        <p><strong>🗣 Languages:</strong>
-        ${languages}
-        </p>
+        <p><strong>🗣 Languages:</strong> ${languages}</p>
 
-        <p><strong>🕐 Timezones:</strong>
-        ${timezones}
-        </p>
+        <p><strong>🕐 Timezones:</strong> ${tzList}</p>
 
-        <p><strong>🕰 Local Time:</strong>
-        ${localTime}
-        </p>
+        <p><strong>🕰 Local Time:</strong> ${localTime}</p>
 
-        <p><strong>🌐 Domain:</strong>
-        ${
-          country.tlds
-            ? country.tlds.join(", ")
-            : "N/A"
-        }
-        </p>
+        <p><strong>🌐 Domain:</strong> ${country.tld || "N/A"}</p>
 
-        <p><strong>📍 Latitude:</strong>
-        ${country.coordinates ? country.coordinates.lat : "N/A"}
-        </p>
+        <p><strong>📍 Latitude:</strong> ${country.latitude || "N/A"}</p>
 
-        <p><strong>📍 Longitude:</strong>
-        ${country.coordinates ? country.coordinates.lng : "N/A"}
-        </p>
+        <p><strong>📍 Longitude:</strong> ${country.longitude || "N/A"}</p>
 
       </div>
     `;
