@@ -371,6 +371,42 @@ function fallbackTime() {
 // 🌍 COUNTRY SEARCH (RESTCOUNTRIES API)
 // ==========================================
 
+function getCurrentTime(timezoneStr) {
+  try {
+    if (!timezoneStr) return "Time unknown";
+    if (timezoneStr.includes("/")) {
+      return new Intl.DateTimeFormat("en-US", { 
+        timeZone: timezoneStr, 
+        timeStyle: "short", 
+        dateStyle: "medium" 
+      }).format(new Date());
+    }
+    if (timezoneStr.startsWith("UTC")) {
+      const offset = timezoneStr.replace("UTC", "").trim();
+      if (!offset) {
+         return new Intl.DateTimeFormat("en-US", { timeZone: "UTC", timeStyle: "short", dateStyle: "medium" }).format(new Date());
+      }
+      const sign = offset[0] === "-" ? -1 : 1;
+      const parts = offset.substring(1).split(":");
+      const hours = parseInt(parts[0], 10) || 0;
+      const mins = parseInt(parts[1], 10) || 0;
+      const totalOffsetMinutes = sign * ((hours * 60) + mins);
+      
+      const now = new Date();
+      const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const targetMs = utcMs + (totalOffsetMinutes * 60000);
+      const targetDate = new Date(targetMs);
+      
+      const timeStr = targetDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+      const dateStr = targetDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      return dateStr + ", " + timeStr;
+    }
+  } catch(e) {
+    return "Time unknown";
+  }
+  return "Time unknown";
+}
+
 searchBtn.addEventListener("click", async () => {
   const countryName = document.getElementById("countryInput").value.trim();
 
@@ -427,6 +463,14 @@ searchBtn.addEventListener("click", async () => {
     ).toLocaleString();
 
     const flag = country.flag?.url_png || country.flag?.url_svg;
+
+    const timezones = country.timezones
+      ? country.timezones.join(", ")
+      : "N/A";
+
+    const localTime = country.timezones && country.timezones.length > 0 
+      ? getCurrentTime(country.timezones[0])
+      : "Time unknown";
 
     countryBox.innerHTML = `
       <div style="
@@ -487,11 +531,11 @@ searchBtn.addEventListener("click", async () => {
         </p>
 
         <p><strong>🕐 Timezones:</strong>
-        ${
-          country.timezones
-            ? country.timezones.join(", ")
-            : "N/A"
-        }
+        ${timezones}
+        </p>
+
+        <p><strong>🕰 Local Time:</strong>
+        ${localTime}
         </p>
 
         <p><strong>🌐 Domain:</strong>
@@ -536,6 +580,7 @@ searchBtn.addEventListener("click", async () => {
 
     const flag = `https://flagsapi.com/${country.flag.toUpperCase()}/flat/64.png`;
     const population = Number(country.population || 0).toLocaleString();
+    const localTime = country.timezone ? getCurrentTime(country.timezone) : "Time unknown";
 
     countryBox.innerHTML = `
       <div style="
@@ -581,6 +626,7 @@ searchBtn.addEventListener("click", async () => {
         <p><strong>💱 Currency:</strong> ${country.currency} (${country.currencyCode})</p>
         <p><strong>🗣 Languages:</strong> ${country.language}</p>
         <p><strong>🕐 Timezones:</strong> ${country.timezone}</p>
+        <p><strong>🕰 Local Time:</strong> ${localTime}</p>
         <p><strong>📍 Latitude:</strong> ${country.lat}</p>
         <p><strong>📍 Longitude:</strong> ${country.lon}</p>
 
